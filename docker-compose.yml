@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: mf
+      POSTGRES_PASSWORD: mfpass
+      POSTGRES_DB: mf
+    ports:
+      - "5432:5432"
+
+  etl:
+    build:
+      context: .
+      dockerfile: Dockerfile.etl
+    env_file: .env
+    depends_on: [db]
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file: .env
+    depends_on: [db]
+    ports:
+      - "8000:8000"
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    env_file: .env
+    depends_on: [api]
+    ports:
+      - "8501:8501"

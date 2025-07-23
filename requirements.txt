@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+streamlit
+pandas
+sqlalchemy
+psycopg2-binary
+requests
+pytest
+yfinance
+fmp_python
+finnhub-python
