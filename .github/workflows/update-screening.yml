@@ -30,13 +30,21 @@ jobs:
         FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
         IEX_TOKEN: ${{ secrets.IEX_TOKEN }}
       run: |
-        # If API keys are not available, generate sample data
+        # Try to run ETL with real API data, fallback to sample data if it fails
         if [ -z "$ALPHA_VANTAGE_KEY" ]; then
-          echo "⚠️ No API keys found. Generating sample data for demo..."
-          python generate_sample_data.py
+          echo "⚠️ No ALPHA_VANTAGE_KEY found. Generating sample data for demo..."
+          python3 generate_sample_data.py
         else
-          echo "🔑 Running ETL with real API data..."
-          python -m etl.main
+          echo "🔑 Running ETL with Alpha Vantage API key..."
+          echo "🔑 API Key (first 8 chars): ${ALPHA_VANTAGE_KEY:0:8}..."
+          
+          # Try to run the real ETL
+          if python3 -m etl.main; then
+            echo "✅ ETL completed successfully with live data"
+          else
+            echo "❌ ETL failed, falling back to sample data..."
+            python3 generate_sample_data.py
+          fi
         fi
         
     - name: Commit and push changes
