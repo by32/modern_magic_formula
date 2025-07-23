@@ -80,27 +80,11 @@ jobs:
         
         if [ -f "data/metadata.json" ]; then
           echo "### 📈 Latest Data" >> $GITHUB_STEP_SUMMARY
-          python -c '
-import json
-with open("data/metadata.json") as f:
-    meta = json.load(f)
-    print(f"- **Run Date**: {meta.get(\"run_date\", \"Unknown\")[:19]}")
-    print(f"- **Total Stocks**: {meta.get(\"total_stocks\", \"Unknown\")}")
-    print(f"- **Data Sources**: {meta.get(\"data_sources\", [\"Unknown\"])}")
-' >> $GITHUB_STEP_SUMMARY
+          python3 -c "import json; meta=json.load(open('data/metadata.json')); print(f'- **Run Date**: {meta.get(\"run_date\", \"Unknown\")[:19]}'); print(f'- **Total Stocks**: {meta.get(\"total_stocks\", \"Unknown\")}'); print(f'- **Data Sources**: {meta.get(\"data_sources\", [\"Unknown\"])}')" >> $GITHUB_STEP_SUMMARY
         
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🏆 Top 3 Picks" >> $GITHUB_STEP_SUMMARY
-          python -c '
-import pandas as pd
-df = pd.read_csv("data/latest_screening.csv")
-top3 = df.head(3)
-for _, row in top3.iterrows():
-    print(f"{int(row[\"magic_formula_rank\"])}. **{row[\"ticker\"]}** - {row[\"company_name\"]}")
-    print(f"   - Earnings Yield: {row[\"earnings_yield\"]*100:.2f}%")
-    print(f"   - ROC: {row[\"roc\"]*100:.2f}%")
-    print()
-' >> $GITHUB_STEP_SUMMARY
+          python3 -c "import pandas as pd; df=pd.read_csv('data/latest_screening.csv'); [print(f'{int(row[\"magic_formula_rank\"])}. **{row[\"ticker\"]}** - {row[\"company_name\"]}\\n   - Earnings Yield: {row[\"earnings_yield\"]*100:.2f}%\\n   - ROC: {row[\"roc\"]*100:.2f}%\\n') for _, row in df.head(3).iterrows()]" >> $GITHUB_STEP_SUMMARY
         else
           echo "❌ No screening data available" >> $GITHUB_STEP_SUMMARY
         fi
