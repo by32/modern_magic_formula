@@ -1,9 +1,12 @@
 {
-  "run_date": "2025-07-23T17:18:08.918369",
-  "total_stocks": 14,
-  "successful_fetches": 14,
+  "run_date": "2025-07-23T23:37:26.398162",
+  "total_stocks": 948,
+  "russell_1000_stocks": 1018,
+  "successful_fetches": 948,
+  "processing_time_seconds": 504.433247,
   "data_sources": [
-    "Alpha Vantage API"
+    "Alpha Vantage API",
+    "Yahoo Finance"
   ],
-  "version": "1.0-live"
+  "version": "2.0-russell1000"
 }
