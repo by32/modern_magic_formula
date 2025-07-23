@@ -24,22 +24,36 @@ def run():
             raw = get_alpha_vantage_fundamentals(ticker, key)
             
             # Check if we got valid data
-            if not raw or 'EBIT' not in raw:
+            if not raw:
                 print(f"⚠️  No fundamental data for {ticker}, skipping...")
                 continue
                 
-            ebit = float(raw.get("EBIT", 0))
-            ev = float(raw.get("EnterpriseValue", 0))
+            # Use Alpha Vantage's available fields
             market_cap = float(raw.get("MarketCapitalization", 0))
+            ebitda = float(raw.get("EBITDA", 0)) if raw.get("EBITDA") not in ['None', '', 'N/A', None] else 0
+            eps = float(raw.get("EPS", 0)) if raw.get("EPS") not in ['None', '', 'N/A', None] else 0
+            revenue = float(raw.get("RevenueTTM", 0)) if raw.get("RevenueTTM") not in ['None', '', 'N/A', None] else 0
             name = raw.get("Name", ticker)
             
-            if ebit <= 0 or ev <= 0:
-                print(f"⚠️  Invalid financial data for {ticker}, skipping...")
+            if market_cap <= 0:
+                print(f"⚠️  Invalid market cap for {ticker}, skipping...")
                 continue
             
-            ey = compute_earnings_yield(ebit, ev)
-            # Mock ROC calculation - in a real implementation, you'd need more data
-            roc = ey * 1.2  # Simplified approximation
+            # Calculate earnings yield using available data
+            if ebitda > 0:
+                # Use EBITDA as proxy for earnings, market cap as proxy for enterprise value
+                ey = ebitda / market_cap
+            elif eps > 0:
+                # Use EPS-based earnings yield
+                pe_ratio = float(raw.get("PERatio", 0)) if raw.get("PERatio") not in ['None', '', 'N/A', None] else 0
+                ey = 1 / pe_ratio if pe_ratio > 0 else eps / market_cap
+            else:
+                print(f"⚠️  No earnings data for {ticker}, skipping...")
+                continue
+            
+            # Calculate ROC using return on equity as proxy
+            roe = float(raw.get("ReturnOnEquityTTM", 0)) if raw.get("ReturnOnEquityTTM") not in ['None', '', 'N/A', None] else 0
+            roc = roe if roe > 0 else ey * 1.2  # Fallback to approximation
             
             rows.append({
                 "ticker": ticker,
@@ -47,8 +61,9 @@ def run():
                 "earnings_yield": ey,
                 "roc": roc,
                 "market_cap": market_cap,
-                "ebit": ebit,
-                "enterprise_value": ev,
+                "ebitda": ebitda,
+                "eps": eps,
+                "revenue": revenue,
                 "last_updated": datetime.now().isoformat()
             })
             

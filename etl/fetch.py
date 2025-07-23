@@ -32,17 +32,27 @@ def get_alpha_vantage_fundamentals(ticker: str, api_key: str):
             print(f"⚠️  Empty response from Alpha Vantage for {ticker}")
             return {}
         else:
-            # Check if we have the required fields
-            required_fields = ["Symbol", "Name", "EBIT", "EnterpriseValue", "MarketCapitalization"]
-            missing_fields = [field for field in required_fields if field not in data]
+            # Check if we have the essential fields (using Alpha Vantage's actual field names)
+            required_fields = ["Symbol", "Name", "MarketCapitalization"]
+            optional_fields = ["EBITDA", "EPS", "BookValue", "RevenueTTM"]
             
-            if missing_fields:
-                print(f"⚠️  Missing fields for {ticker}: {missing_fields}")
+            missing_required = [field for field in required_fields if field not in data or data[field] in ['None', '', 'N/A']]
+            
+            if missing_required:
+                print(f"⚠️  Missing required fields for {ticker}: {missing_required}")
                 print(f"📊 Available fields: {list(data.keys())[:10]}...")  # Show first 10 fields
                 return {}
             else:
-                print(f"✅ Got valid data for {ticker}: {data.get('Name', 'Unknown')}")
-                return data
+                # Check if we have at least some financial data
+                has_financial_data = any(field in data and data[field] not in ['None', '', 'N/A', None] for field in optional_fields)
+                
+                if not has_financial_data:
+                    print(f"⚠️  No usable financial data for {ticker}")
+                    return {}
+                else:
+                    print(f"✅ Got valid data for {ticker}: {data.get('Name', 'Unknown')}")
+                    print(f"📈 Available financial fields: {[f for f in optional_fields if f in data and data[f] not in ['None', '', 'N/A', None]]}")
+                    return data
                 
     except requests.exceptions.RequestException as e:
         print(f"❌ Network error fetching {ticker}: {e}")
