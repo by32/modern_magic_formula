@@ -1,0 +1,11 @@
+[project]
+name = "modern-magic-formula"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=2.3.1",
+    "requests>=2.32.4",
+    "streamlit>=1.47.0",
+    "yfinance>=0.2.65",
+]
