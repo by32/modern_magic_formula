@@ -37,7 +37,7 @@ jobs:
         # Try to run ETL with real API data, fallback to sample data if it fails
         if [ -z "$ALPHA_VANTAGE_KEY" ]; then
           echo "⚠️ No ALPHA_VANTAGE_KEY found. Generating sample data for demo..."
-          python3 generate_sample_data.py
+          uv run python generate_sample_data.py
         else
           echo "🔑 Running Russell 1000 ETL with Alpha Vantage API key..."
           echo "🔑 API Key (first 8 chars): ${ALPHA_VANTAGE_KEY:0:8}..."
@@ -47,7 +47,7 @@ jobs:
             echo "✅ Russell 1000 ETL completed successfully with live data"
           else
             echo "❌ Russell 1000 ETL failed, falling back to sample data..."
-            python3 generate_sample_data.py
+            uv run python generate_sample_data.py
           fi
         fi
         
@@ -93,11 +93,11 @@ jobs:
         
         if [ -f "data/metadata.json" ]; then
           echo "### 📈 Latest Russell 1000 Data" >> $GITHUB_STEP_SUMMARY
-          python3 -c "import json; meta=json.load(open('data/metadata.json')); print(f'- **Run Date**: {meta.get(\"run_date\", \"Unknown\")[:19]}'); print(f'- **Stocks Processed**: {meta.get(\"total_stocks\", \"Unknown\")}/{meta.get(\"russell_1000_stocks\", \"Unknown\")} Russell 1000 stocks'); print(f'- **Processing Time**: {meta.get(\"processing_time_seconds\", 0):.1f} seconds'); print(f'- **Data Sources**: {meta.get(\"data_sources\", [\"Unknown\"])}')" >> $GITHUB_STEP_SUMMARY
+          uv run python -c "import json; meta=json.load(open('data/metadata.json')); print(f'- **Run Date**: {meta.get(\"run_date\", \"Unknown\")[:19]}'); print(f'- **Stocks Processed**: {meta.get(\"total_stocks\", \"Unknown\")}/{meta.get(\"russell_1000_stocks\", \"Unknown\")} Russell 1000 stocks'); print(f'- **Processing Time**: {meta.get(\"processing_time_seconds\", 0):.1f} seconds'); print(f'- **Data Sources**: {meta.get(\"data_sources\", [\"Unknown\"])}')" >> $GITHUB_STEP_SUMMARY
         
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🏆 Top 5 Magic Formula Picks" >> $GITHUB_STEP_SUMMARY
-          python3 -c "import pandas as pd; df=pd.read_csv('data/latest_screening.csv'); [print(f'{int(row[\"magic_formula_rank\"])}. **{row[\"ticker\"]}** - {row[\"company_name\"]}\\n   - EY: {row[\"earnings_yield\"]*100:.2f}% | ROC: {row[\"roc\"]*100:.2f}% | Sector: {row.get(\"sector\", \"Unknown\")}\\n') for _, row in df.head(5).iterrows()]" >> $GITHUB_STEP_SUMMARY
+          uv run python -c "import pandas as pd; df=pd.read_csv('data/latest_screening.csv'); [print(f'{int(row[\"magic_formula_rank\"])}. **{row[\"ticker\"]}** - {row[\"company_name\"]}\\n   - EY: {row[\"earnings_yield\"]*100:.2f}% | ROC: {row[\"roc\"]*100:.2f}% | Sector: {row.get(\"sector\", \"Unknown\")}\\n') for _, row in df.head(5).iterrows()]" >> $GITHUB_STEP_SUMMARY
         else
           echo "❌ No Russell 1000 screening data available" >> $GITHUB_STEP_SUMMARY
         fi

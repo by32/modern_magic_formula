@@ -65,14 +65,79 @@ def generate_sample_data():
         # In real implementation, this would use working capital + fixed assets
         roc = earnings_yield * 1.5  # Simple approximation for demo
         
+        # Mock F-Score (Piotroski Score) - assign realistic scores
+        f_scores = {"AAPL": 8, "MSFT": 7, "GOOGL": 6, "BRK.B": 8, "V": 9, "JNJ": 7}
+        f_score = f_scores.get(stock["ticker"], 6)
+        
+        # Mock debt-to-equity ratios - realistic values for large companies
+        debt_ratios = {"AAPL": 0.3, "MSFT": 0.2, "GOOGL": 0.1, "BRK.B": 0.2, "V": 0.4, "JNJ": 0.5}
+        debt_to_equity = debt_ratios.get(stock["ticker"], 0.3)
+        
+        # Mock momentum data - some stocks with positive, some negative momentum
+        momentum_data = {
+            "AAPL": 0.15,    # +15% momentum
+            "MSFT": 0.08,    # +8% momentum  
+            "GOOGL": -0.05,  # -5% momentum
+            "BRK.B": 0.12,   # +12% momentum
+            "V": 0.22,       # +22% momentum
+            "JNJ": 0.03      # +3% momentum
+        }
+        momentum_6m = momentum_data.get(stock["ticker"], 0.05)
+        
+        # Mock price strength scores based on momentum
+        if momentum_6m > 0.15:
+            price_strength_score = 3
+        elif momentum_6m > 0.05:
+            price_strength_score = 2
+        elif momentum_6m > 0:
+            price_strength_score = 1
+        else:
+            price_strength_score = 0
+        
+        # Mock cash flow quality metrics
+        cash_flow_scores = {"AAPL": 4, "MSFT": 5, "GOOGL": 3, "BRK.B": 4, "V": 5, "JNJ": 4}
+        cash_flow_quality_score = cash_flow_scores.get(stock["ticker"], 3)
+        
+        # Mock cash flow margins (as percentages, will be converted for display)
+        ocf_margins = {"AAPL": 0.28, "MSFT": 0.35, "GOOGL": 0.22, "BRK.B": 0.15, "V": 0.45, "JNJ": 0.18}
+        ocf_margin = ocf_margins.get(stock["ticker"], 0.20)
+        
+        fcf_margins = {"AAPL": 0.24, "MSFT": 0.32, "GOOGL": 0.18, "BRK.B": 0.12, "V": 0.42, "JNJ": 0.15}
+        fcf_margin = fcf_margins.get(stock["ticker"], 0.17)
+        
+        # Operating cash flow to net income ratios
+        ocf_to_ni_ratios = {"AAPL": 1.2, "MSFT": 1.4, "GOOGL": 1.1, "BRK.B": 1.3, "V": 1.5, "JNJ": 1.2}
+        ocf_to_ni_ratio = ocf_to_ni_ratios.get(stock["ticker"], 1.2)
+        
+        # Mock sentiment scores (market sentiment proxy)
+        sentiment_scores = {"AAPL": 3, "MSFT": 3, "GOOGL": 2, "BRK.B": 3, "V": 3, "JNJ": 2}
+        sentiment_score = sentiment_scores.get(stock["ticker"], 2)
+        
+        # Calculate composite scores
+        from etl.compute import compute_overall_quality_score, compute_value_trap_avoidance_score
+        overall_quality_score = compute_overall_quality_score(f_score, cash_flow_quality_score, sentiment_score)
+        value_trap_avoidance_score = compute_value_trap_avoidance_score(momentum_6m, f_score, cash_flow_quality_score)
+        
         rows.append({
             "ticker": stock["ticker"],
             "company_name": stock["company_name"],
             "earnings_yield": earnings_yield,
             "roc": roc,
+            "f_score": f_score,
+            "debt_to_equity": debt_to_equity,
+            "momentum_6m": momentum_6m,
+            "price_strength_score": price_strength_score,
+            "cash_flow_quality_score": cash_flow_quality_score,
+            "sentiment_score": sentiment_score,
+            "overall_quality_score": overall_quality_score,
+            "value_trap_avoidance_score": value_trap_avoidance_score,
+            "ocf_margin": ocf_margin,
+            "fcf_margin": fcf_margin,
+            "ocf_to_ni_ratio": ocf_to_ni_ratio,
             "market_cap": stock["market_cap"],
             "ebit": stock["ebit"],
             "enterprise_value": stock["enterprise_value"],
+            "sector": "Technology",  # Simplified for sample data
             "last_updated": datetime.now().isoformat()
         })
     

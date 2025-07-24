@@ -10,8 +10,8 @@ import logging, os, pandas as pd, json, time
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from etl.russell_1000 import get_cached_russell_1000
-from etl.fetch import get_alpha_vantage_bulk_fundamentals, get_yahoo_finance_fundamentals
-from etl.compute import compute_earnings_yield, compute_roc
+from etl.fetch import get_alpha_vantage_bulk_fundamentals, get_yahoo_finance_fundamentals, get_6_month_price_data
+from etl.compute import compute_earnings_yield, compute_roc, compute_piotroski_fscore, compute_debt_to_equity, compute_momentum_6m, compute_price_strength_score, compute_cash_flow_quality_score, compute_cash_flow_ratios, compute_sentiment_score, compute_overall_quality_score, compute_value_trap_avoidance_score
 
 def get_api_usage_tracker() -> Dict:
     """Track daily API usage to stay within limits."""
@@ -172,11 +172,46 @@ def process_single_stock(ticker: str, raw_data: Dict, stock_info: Dict) -> Optio
         roe = float(raw_data.get("ReturnOnEquityTTM", 0)) if raw_data.get("ReturnOnEquityTTM") not in ['None', '', 'N/A', None] else 0
         roc = roe if roe > 0 else ey * 1.2  # Fallback to approximation
         
+        # Calculate Piotroski F-Score for value trap avoidance
+        f_score = compute_piotroski_fscore(raw_data)
+        
+        # Calculate debt-to-equity ratio
+        debt_to_equity = compute_debt_to_equity(raw_data)
+        
+        # Get 6-month momentum data (using Yahoo Finance for price history)
+        price_data = get_6_month_price_data(ticker)
+        momentum_6m = compute_momentum_6m(ticker, price_data) if price_data else None
+        price_strength_score = compute_price_strength_score(price_data) if price_data else 0
+        
+        # Get current price for display
+        current_price = price_data.get('current_price') if price_data else None
+        
+        # Calculate cash flow quality metrics
+        cash_flow_quality_score = compute_cash_flow_quality_score(raw_data)
+        cash_flow_ratios = compute_cash_flow_ratios(raw_data)
+        
+        # Calculate sentiment and composite scores
+        sentiment_score = compute_sentiment_score(ticker, raw_data)
+        overall_quality_score = compute_overall_quality_score(f_score, cash_flow_quality_score, sentiment_score)
+        value_trap_avoidance_score = compute_value_trap_avoidance_score(momentum_6m, f_score, cash_flow_quality_score)
+        
         return {
             "ticker": ticker,
             "company_name": name,
             "earnings_yield": ey,
             "roc": roc,
+            "f_score": f_score,
+            "debt_to_equity": debt_to_equity,
+            "momentum_6m": momentum_6m,
+            "price_strength_score": price_strength_score,
+            "cash_flow_quality_score": cash_flow_quality_score,
+            "sentiment_score": sentiment_score,
+            "overall_quality_score": overall_quality_score,
+            "value_trap_avoidance_score": value_trap_avoidance_score,
+            "ocf_margin": cash_flow_ratios.get('ocf_margin'),
+            "fcf_margin": cash_flow_ratios.get('fcf_margin'),
+            "ocf_to_ni_ratio": cash_flow_ratios.get('ocf_to_ni'),
+            "current_price": current_price,
             "market_cap": market_cap,
             "ebitda": ebitda,
             "eps": eps,
