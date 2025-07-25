@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "edgartools>=4.4.4",
     "pandas>=2.3.1",
+    "plotly>=6.2.0",
     "requests>=2.32.4",
     "scipy>=1.16.0",
     "streamlit>=1.47.0",
