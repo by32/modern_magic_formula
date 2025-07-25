@@ -26,16 +26,16 @@ def run_simple_backtest():
         print("❌ No screening data available. Please run ETL first.")
         return
     
-    # Configure backtest
+    # Configure extended backtest
     config = BacktestConfig(
-        start_date="2021-01-01",  # 3-year backtest (more recent data)
+        start_date="2000-01-01",  # 24-year extended backtest
         end_date="2024-01-01",
-        portfolio_size=20,  # Top 20 stocks
+        portfolio_size=30,  # Top 30 stocks (with risk constraints)
         rebalance_frequency="quarterly",
         initial_capital=100000.0,
-        transaction_cost=0.001,  # 0.1% transaction cost
+        transaction_cost=0.001,  # Will be overridden by realistic costs
         benchmark="SPY",
-        min_market_cap=10e9  # $10B minimum market cap for better data availability
+        min_market_cap=5e9  # $5B minimum for longer history
     )
     
     print(f"📊 Screening data sample:")

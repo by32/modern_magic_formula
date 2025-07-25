@@ -14,6 +14,11 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 import yfinance as yf
 from dataclasses import dataclass
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from etl.realistic_costs import RealisticTransactionCosts
+from backtesting.risk_constraints import RiskConstraintManager
 
 
 @dataclass
@@ -39,6 +44,8 @@ class BacktestEngine:
         self.price_data = {}
         self.benchmark_data = None
         self.results = None
+        self.cost_model = RealisticTransactionCosts()  # Initialize realistic cost model
+        self.risk_manager = RiskConstraintManager()    # Initialize risk constraint manager
         
     def load_universe(self, screening_data: pd.DataFrame) -> None:
         """
@@ -277,9 +284,20 @@ class BacktestEngine:
         for i, rebalance_date in enumerate(rebalance_dates):
             print(f"\n📊 Rebalance {i+1}/{len(rebalance_dates)}: {rebalance_date.strftime('%Y-%m-%d')}")
             
-            # Create portfolio for this period
-            portfolio = self.create_portfolio_rankings(rebalance_date)
-            print(f"   🎯 Selected {len(portfolio)} stocks")
+            # Create portfolio for this period with risk constraints
+            initial_portfolio = self.create_portfolio_rankings(rebalance_date)
+            print(f"   📊 Initial selection: {len(initial_portfolio)} stocks")
+            
+            # Apply risk constraints
+            try:
+                constrained_portfolio = self.risk_manager.apply_risk_constraints(
+                    initial_portfolio, target_size=self.config.portfolio_size
+                )
+                portfolio = constrained_portfolio
+                print(f"   🛡️  Risk-constrained portfolio: {len(portfolio)} stocks")
+            except Exception as e:
+                print(f"   ⚠️  Risk constraint failed, using unconstrained: {e}")
+                portfolio = initial_portfolio.head(self.config.portfolio_size)
             
             # Calculate end date for this period
             if i < len(rebalance_dates) - 1:
@@ -291,13 +309,14 @@ class BacktestEngine:
             period_returns = self.calculate_portfolio_returns(portfolio, rebalance_date, end_date)
             
             if len(period_returns) > 0:
-                # Apply transaction costs (only on rebalancing)
+                # Apply realistic transaction costs (only on rebalancing)
                 if i > 0:  # No transaction cost for initial portfolio
-                    transaction_cost = self.config.transaction_cost
+                    period_transaction_cost = self.calculate_realistic_transaction_costs(portfolio)
                     # Reduce first return by transaction cost
                     if len(period_returns) > 0:
-                        period_returns.iloc[0] -= transaction_cost
-                        transaction_costs += transaction_cost
+                        period_returns.iloc[0] -= period_transaction_cost
+                        transaction_costs += period_transaction_cost
+                        print(f"   💰 Transaction cost: {period_transaction_cost*100:.2f}%")
                 
                 all_returns = pd.concat([all_returns, period_returns])
                 
@@ -350,6 +369,39 @@ class BacktestEngine:
         print(f"   💰 Total transaction costs: {transaction_costs*100:.3f}%")
         
         return self.results
+    
+    def calculate_realistic_transaction_costs(self, portfolio: pd.DataFrame) -> float:
+        """
+        Calculate realistic transaction costs for portfolio rebalancing.
+        
+        Args:
+            portfolio: DataFrame with portfolio holdings
+            
+        Returns:
+            Average transaction cost as fraction of portfolio value
+        """
+        try:
+            # Equal weight allocation
+            position_size = self.config.initial_capital / len(portfolio)
+            
+            # Get transaction costs for each stock
+            costs = []
+            for _, stock in portfolio.iterrows():
+                ticker = stock['ticker']
+                cost_data = self.cost_model.estimate_total_cost(ticker, position_size)
+                if cost_data['data_available']:
+                    costs.append(cost_data['total_cost'])
+                else:
+                    # Use fallback cost for missing data
+                    costs.append(self.config.transaction_cost)
+            
+            # Return weighted average cost
+            avg_cost = np.mean(costs) if costs else self.config.transaction_cost
+            return avg_cost
+            
+        except Exception as e:
+            print(f"⚠️  Error calculating realistic costs: {e}")
+            return self.config.transaction_cost  # Fallback to simple cost
 
 
 def load_current_screening_data() -> pd.DataFrame:

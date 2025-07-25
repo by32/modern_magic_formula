@@ -1,0 +1,511 @@
+ticker,company_name,market_cap,sector,is_sp500,market_cap_rank,proxy_date
+NVDA,Nvidia,4237101891584,Information Technology,True,1,2025-07-24
+MSFT,Microsoft,3797136179200,Information Technology,True,2,2025-07-24
+AAPL,Apple Inc.,3192676417536,Information Technology,True,3,2025-07-24
+AMZN,Amazon,2465446494208,Consumer Discretionary,True,4,2025-07-24
+GOOGL,Alphabet Inc. (Class A),2338997141504,Communication Services,True,5,2025-07-24
+GOOG,Alphabet Inc. (Class C),2335807111168,Communication Services,True,6,2025-07-24
+META,Meta Platforms,1797243142144,Communication Services,True,7,2025-07-24
+AVGO,Broadcom,1357938819072,Information Technology,True,8,2025-07-24
+BRK-B,Berkshire Hathaway,1036370706432,Financials,True,9,2025-07-24
+TSLA,"Tesla, Inc.",983359029248,Consumer Discretionary,True,10,2025-07-24
+JPM,JPMorgan Chase,824139055104,Financials,True,11,2025-07-24
+WMT,Walmart,770908553216,Consumer Staples,True,12,2025-07-24
+LLY,Lilly (Eli),723063472128,Health Care,True,13,2025-07-24
+V,Visa Inc.,691480428544,Financials,True,14,2025-07-24
+ORCL,Oracle Corporation,682068213760,Information Technology,True,15,2025-07-24
+MA,Mastercard,511704203264,Financials,True,16,2025-07-24
+NFLX,Netflix,501735653376,Communication Services,True,17,2025-07-24
+XOM,ExxonMobil,477465051136,Energy,True,18,2025-07-24
+COST,Costco,414118805504,Consumer Staples,True,19,2025-07-24
+JNJ,Johnson & Johnson,407973232640,Health Care,True,20,2025-07-24
+PG,Procter & Gamble,372336361472,Consumer Staples,True,21,2025-07-24
+HD,Home Depot (The),371197673472,Consumer Discretionary,True,22,2025-07-24
+PLTR,Palantir Technologies,365455638528,Information Technology,True,23,2025-07-24
+BAC,Bank of America,359860961280,Financials,True,24,2025-07-24
+ABBV,AbbVie,337082122240,Health Care,True,25,2025-07-24
+CVX,Chevron Corporation,316838215680,Energy,True,26,2025-07-24
+KO,Coca-Cola Company (The),297425043456,Consumer Staples,True,27,2025-07-24
+GE,GE Aerospace,284208529408,Industrials,True,28,2025-07-24
+TMUS,T-Mobile US,281023873024,Communication Services,True,29,2025-07-24
+WFC,Wells Fargo,272928096256,Financials,True,30,2025-07-24
+CSCO,Cisco,270428405760,Information Technology,True,31,2025-07-24
+AMD,Advanced Micro Devices,262861373440,Information Technology,True,32,2025-07-24
+CRM,Salesforce,255921209344,Information Technology,True,33,2025-07-24
+UNH,UnitedHealth Group,252711043072,Health Care,True,34,2025-07-24
+PM,Philip Morris International,250724237312,Consumer Staples,True,35,2025-07-24
+IBM,IBM,242117214208,Information Technology,True,36,2025-07-24
+MS,Morgan Stanley,228615602176,Financials,True,37,2025-07-24
+LIN,Linde plc,221941661696,Materials,True,38,2025-07-24
+GS,Goldman Sachs,220673900544,Financials,True,39,2025-07-24
+DIS,Walt Disney Company (The),219235614720,Communication Services,True,40,2025-07-24
+ABT,Abbott Laboratories,218593492992,Health Care,True,41,2025-07-24
+INTU,Intuit,217916194816,Information Technology,True,42,2025-07-24
+BX,Blackstone Inc.,216088379392,Financials,True,43,2025-07-24
+AXP,American Express,214505619456,Financials,True,44,2025-07-24
+MRK,Merck & Co.,211202736128,Health Care,True,45,2025-07-24
+MCD,McDonald's,210562940928,Consumer Discretionary,True,46,2025-07-24
+RTX,RTX Corporation,207768190976,Industrials,True,47,2025-07-24
+NOW,ServiceNow,206360674304,Information Technology,True,48,2025-07-24
+CAT,Caterpillar Inc.,202009690112,Industrials,True,49,2025-07-24
+T,AT&T,199935115264,Communication Services,True,50,2025-07-24
+PEP,PepsiCo,197845745664,Consumer Staples,True,51,2025-07-24
+UBER,Uber,190024630272,Industrials,True,52,2025-07-24
+BKNG,Booking Holdings,183852695552,Consumer Discretionary,True,53,2025-07-24
+VZ,Verizon,181636055040,Communication Services,True,54,2025-07-24
+TMO,Thermo Fisher Scientific,179320979456,Health Care,True,55,2025-07-24
+C,Citigroup,175603449856,Financials,True,56,2025-07-24
+ACN,Accenture,175463907328,Information Technology,True,57,2025-07-24
+SCHW,Charles Schwab Corporation,175337603072,Financials,True,58,2025-07-24
+ISRG,Intuitive Surgical,175126609920,Health Care,True,59,2025-07-24
+QCOM,Qualcomm,174406320128,Information Technology,True,60,2025-07-24
+BA,Boeing,174378975232,Industrials,True,61,2025-07-24
+BLK,BlackRock,173123682304,Financials,True,62,2025-07-24
+GEV,GE Vernova,170303242240,Industrials,True,63,2025-07-24
+TXN,Texas Instruments,168792211456,Information Technology,True,64,2025-07-24
+AMGN,Amgen,165909168128,Health Care,True,65,2025-07-24
+SPGI,S&P Global,162802663424,Financials,True,66,2025-07-24
+ADBE,Adobe Inc.,157670899712,Information Technology,True,67,2025-07-24
+BSX,Boston Scientific,157132374016,Health Care,True,68,2025-07-24
+SYK,Stryker Corporation,151589568512,Health Care,True,69,2025-07-24
+AMAT,Applied Materials,150965911552,Information Technology,True,70,2025-07-24
+ETN,Eaton Corporation,150611361792,Industrials,True,71,2025-07-24
+NEE,NextEra Energy,148207108096,Utilities,True,72,2025-07-24
+DHR,Danaher Corporation,145222500352,Health Care,True,73,2025-07-24
+PGR,Progressive Corporation,145020092416,Financials,True,74,2025-07-24
+HON,Honeywell,144398336000,Industrials,True,75,2025-07-24
+PFE,Pfizer,144124133376,Health Care,True,76,2025-07-24
+ANET,Arista Networks,143225110528,Information Technology,True,77,2025-07-24
+TJX,TJX Companies,140858179584,Consumer Discretionary,True,78,2025-07-24
+GILD,Gilead Sciences,140812877824,Health Care,True,79,2025-07-24
+DE,Deere & Company,139383816192,Industrials,True,80,2025-07-24
+KKR,KKR & Co.,138957291520,Financials,True,81,2025-07-24
+COF,Capital One,135145545728,Financials,True,82,2025-07-24
+PANW,Palo Alto Networks,134133489664,Information Technology,True,83,2025-07-24
+CMCSA,Comcast,132060971008,Communication Services,True,84,2025-07-24
+UNP,Union Pacific Corporation,131755401216,Industrials,True,85,2025-07-24
+LOW,Lowe's,126412398592,Consumer Discretionary,True,86,2025-07-24
+APH,Amphenol,126354817024,Information Technology,True,87,2025-07-24
+LRCX,Lam Research,125072351232,Information Technology,True,88,2025-07-24
+MU,Micron Technology,125040394240,Information Technology,True,89,2025-07-24
+ADP,Automatic Data Processing,124309856256,Industrials,True,90,2025-07-24
+VRTX,Vertex Pharmaceuticals,121277513728,Health Care,True,91,2025-07-24
+COP,ConocoPhillips,120711643136,Energy,True,92,2025-07-24
+KLAC,KLA Corporation,119569670144,Information Technology,True,93,2025-07-24
+MDT,Medtronic,118285926400,Health Care,True,94,2025-07-24
+CRWD,CrowdStrike,115160055808,Information Technology,True,95,2025-07-24
+SNPS,Synopsys,112817627136,Information Technology,True,96,2025-07-24
+ADI,Analog Devices,112335659008,Information Technology,True,97,2025-07-24
+NKE,"Nike, Inc.",111387795456,Consumer Discretionary,True,98,2025-07-24
+AMT,American Tower,108252233728,Real Estate,True,99,2025-07-24
+CB,Chubb Limited,107710226432,Financials,True,100,2025-07-24
+SBUX,Starbucks,106480672768,Consumer Discretionary,True,101,2025-07-24
+WELL,Welltower,105547849728,Real Estate,True,102,2025-07-24
+ICE,Intercontinental Exchange,105306259456,Financials,True,103,2025-07-24
+SO,Southern Company,104518041600,Utilities,True,104,2025-07-24
+DASH,DoorDash,103262175232,Consumer Discretionary,True,105,2025-07-24
+TT,Trane Technologies,102974103552,Industrials,True,106,2025-07-24
+MMC,Marsh McLennan,102415114240,Financials,True,107,2025-07-24
+PLD,Prologis,101812043776,Real Estate,True,108,2025-07-24
+COIN,Coinbase,101041471488,Financials,True,109,2025-07-24
+CEG,Constellation Energy,100816846848,Utilities,True,110,2025-07-24
+MO,Altria,100410064896,Consumer Staples,True,111,2025-07-24
+CME,CME Group,99884310528,Financials,True,112,2025-07-24
+BMY,Bristol Myers Squibb,99596812288,Health Care,True,113,2025-07-24
+INTC,Intel,98712051712,Information Technology,True,114,2025-07-24
+LMT,Lockheed Martin,98183700480,Industrials,True,115,2025-07-24
+RCL,Royal Caribbean Group,94872199168,Consumer Discretionary,True,116,2025-07-24
+PH,Parker Hannifin,93229383680,Industrials,True,117,2025-07-24
+DUK,Duke Energy,93076529152,Utilities,True,118,2025-07-24
+WM,Waste Management,92799311872,Industrials,True,119,2025-07-24
+MCO,Moody's Corporation,92048351232,Financials,True,120,2025-07-24
+MDLZ,Mondelez International,90870464512,Consumer Staples,True,121,2025-07-24
+TDG,TransDigm Group,89824673792,Industrials,True,122,2025-07-24
+CTAS,Cintas,89809051648,Industrials,True,123,2025-07-24
+MCK,McKesson Corporation,88705572864,Health Care,True,124,2025-07-24
+CDNS,Cadence Design Systems,88640356352,Information Technology,True,125,2025-07-24
+ABNB,Airbnb,87409704960,Consumer Discretionary,True,126,2025-07-24
+UPS,United Parcel Service,86822199296,Industrials,True,127,2025-07-24
+DELL,Dell Technologies,86813638656,Information Technology,True,128,2025-07-24
+APO,Apollo Global Management,86661349376,Financials,True,129,2025-07-24
+SHW,Sherwin-Williams,85256962048,Materials,True,130,2025-07-24
+GD,General Dynamics,84528357376,Industrials,True,131,2025-07-24
+ORLY,O’Reilly Automotive,83911294976,Consumer Discretionary,True,132,2025-07-24
+EMR,Emerson Electric,82586247168,Industrials,True,133,2025-07-24
+HCA,HCA Healthcare,82151211008,Health Care,True,134,2025-07-24
+NOC,Northrop Grumman,81396670464,Industrials,True,135,2025-07-24
+FTNT,Fortinet,80192634880,Information Technology,True,136,2025-07-24
+MMM,3M,79521660928,Industrials,True,137,2025-07-24
+AJG,Arthur J. Gallagher & Co.,79135735808,Financials,True,138,2025-07-24
+CI,Cigna,78521344000,Health Care,True,139,2025-07-24
+FI,Fiserv,77665116160,Financials,True,140,2025-07-24
+PNC,PNC Financial Services,77280346112,Financials,True,141,2025-07-24
+EQIX,Equinix,77232013312,Real Estate,True,142,2025-07-24
+AON,Aon plc,77006356480,Financials,True,143,2025-07-24
+ITW,Illinois Tool Works,76812017664,Industrials,True,144,2025-07-24
+RSG,Republic Services,76596133888,Industrials,True,145,2025-07-24
+ECL,Ecolab,76500303872,Materials,True,146,2025-07-24
+PYPL,PayPal,75682521088,Financials,True,147,2025-07-24
+HWM,Howmet Aerospace,75406303232,Industrials,True,148,2025-07-24
+MAR,Marriott International,74740744192,Consumer Discretionary,True,149,2025-07-24
+CVS,CVS Health,74319929344,Health Care,True,150,2025-07-24
+JCI,Johnson Controls,72398323712,Industrials,True,151,2025-07-24
+USB,U.S. Bancorp,71762862080,Financials,True,152,2025-07-24
+SNOW,Snowflake Inc.,71743143936,Technology,False,153,2025-07-24
+WMB,Williams Companies,71734337536,Energy,True,154,2025-07-24
+CL,Colgate-Palmolive,71681646592,Consumer Staples,True,155,2025-07-24
+MSI,Motorola Solutions,70910918656,Information Technology,True,156,2025-07-24
+BK,BNY Mellon,70502948864,Financials,True,157,2025-07-24
+NEM,Newmont,68460625920,Materials,True,158,2025-07-24
+ZTS,Zoetis,68036689920,Health Care,True,159,2025-07-24
+CARR,Carrier Global,67765657600,Industrials,True,160,2025-07-24
+VST,Vistra Corp.,66590515200,Utilities,True,161,2025-07-24
+NET,"Cloudflare, Inc.",66403540992,Technology,False,162,2025-07-24
+APD,Air Products,66144526336,Materials,True,163,2025-07-24
+CSX,CSX Corporation,65749250048,Industrials,True,164,2025-07-24
+EOG,EOG Resources,64975945728,Energy,True,165,2025-07-24
+ADSK,Autodesk,64418836480,Information Technology,True,166,2025-07-24
+AZO,AutoZone,64263299072,Consumer Discretionary,True,167,2025-07-24
+WDAY,"Workday, Inc.",63235239936,Information Technology,True,168,2025-07-24
+ELV,Elevance Health,63146663936,Health Care,True,169,2025-07-24
+HLT,Hilton Worldwide,62930862080,Consumer Discretionary,True,170,2025-07-24
+NSC,Norfolk Southern,62673432576,Industrials,True,171,2025-07-24
+FCX,Freeport-McMoRan,62412001280,Materials,True,172,2025-07-24
+SPG,Simon Property Group,62212853760,Real Estate,True,173,2025-07-24
+DLR,Digital Realty,61772242944,Real Estate,True,174,2025-07-24
+CMG,Chipotle Mexican Grill,61628248064,Consumer Discretionary,True,175,2025-07-24
+REGN,Regeneron Pharmaceuticals,60961357824,Health Care,True,176,2025-07-24
+KMI,Kinder Morgan,60948353024,Energy,True,177,2025-07-24
+TEL,TE Connectivity,60824707072,Information Technology,True,178,2025-07-24
+PWR,Quanta Services,60349599744,Industrials,True,179,2025-07-24
+ROP,Roper Technologies,60247642112,Information Technology,True,180,2025-07-24
+TFC,Truist Financial,59557875712,Financials,True,181,2025-07-24
+TRV,Travelers Companies (The),58982854656,Financials,True,182,2025-07-24
+MNST,Monster Beverage,58690306048,Consumer Staples,True,183,2025-07-24
+AEP,American Electric Power,58211229696,Utilities,True,184,2025-07-24
+URI,United Rentals,56890376192,Industrials,True,185,2025-07-24
+NXPI,NXP Semiconductors,56697524224,Information Technology,True,186,2025-07-24
+COR,Cencora,56295895040,Health Care,True,187,2025-07-24
+FDX,FedEx,55792472064,Industrials,True,188,2025-07-24
+AFL,Aflac,55389077504,Financials,True,189,2025-07-24
+AXON,Axon Enterprise,55216459776,Industrials,True,190,2025-07-24
+FAST,Fastenal,55006388224,Industrials,True,191,2025-07-24
+NDAQ,"Nasdaq, Inc.",53680406528,Financials,True,192,2025-07-24
+PCAR,Paccar,53246590976,Industrials,True,193,2025-07-24
+PAYX,Paychex,52739719168,Industrials,True,194,2025-07-24
+BDX,Becton Dickinson,52629647360,Health Care,True,195,2025-07-24
+MPC,Marathon Petroleum,52628832256,Energy,True,196,2025-07-24
+SLB,Schlumberger,52566454272,Energy,True,197,2025-07-24
+SRE,Sempra,52473597952,Utilities,True,198,2025-07-24
+TEAM,Atlassian Corporation,52456574976,Technology,False,199,2025-07-24
+O,Realty Income,52396703744,Real Estate,True,200,2025-07-24
+MET,MetLife,52220272640,Financials,True,201,2025-07-24
+CHTR,Charter Communications,51918639104,Communication Services,True,202,2025-07-24
+ALL,Allstate,51358801920,Financials,True,203,2025-07-24
+OKE,Oneok,51226071040,Energy,True,204,2025-07-24
+LHX,L3Harris,51077386240,Industrials,True,205,2025-07-24
+PSX,Phillips 66,50652565504,Energy,True,206,2025-07-24
+DDOG,Datadog,50614935552,Information Technology,True,207,2025-07-24
+GWW,W. W. Grainger,50547322880,Industrials,True,208,2025-07-24
+PSA,Public Storage,50403082240,Real Estate,True,209,2025-07-24
+CMI,Cummins,50317770752,Industrials,True,210,2025-07-24
+D,Dominion Energy,50101469184,Utilities,True,211,2025-07-24
+CTVA,Corteva,49880272896,Materials,True,212,2025-07-24
+GM,General Motors,49831763968,Consumer Discretionary,True,213,2025-07-24
+CCI,Crown Castle,49603137536,Real Estate,True,214,2025-07-24
+AMP,Ameriprise Financial,49239658496,Financials,True,215,2025-07-24
+XYZ,"Block, Inc.",49060065280,Financials,True,216,2025-07-24
+TGT,Target Corporation,48081010688,Consumer Staples,True,217,2025-07-24
+KR,Kroger,47854469120,Consumer Staples,True,218,2025-07-24
+GLW,Corning Inc.,47722565632,Information Technology,True,219,2025-07-24
+AIG,American International Group,45662625792,Financials,True,220,2025-07-24
+KDP,Keurig Dr Pepper,45594435584,Consumer Staples,True,221,2025-07-24
+BKR,Baker Hughes,45034201088,Energy,True,222,2025-07-24
+F,Ford Motor Company,44775952384,Consumer Discretionary,True,223,2025-07-24
+CPRT,Copart,44740128768,Industrials,True,224,2025-07-24
+ROST,Ross Stores,44625567744,Consumer Discretionary,True,225,2025-07-24
+GRMN,Garmin,44613672960,Consumer Discretionary,True,226,2025-07-24
+EW,Edwards Lifesciences,44464283648,Health Care,True,227,2025-07-24
+IDXX,Idexx Laboratories,44229632000,Health Care,True,228,2025-07-24
+EXC,Exelon,44152229888,Utilities,True,229,2025-07-24
+VLO,Valero Energy,43955331072,Energy,True,230,2025-07-24
+OXY,Occidental Petroleum,43921854464,Energy,True,231,2025-07-24
+PEG,Public Service Enterprise Group,43377897472,Utilities,True,232,2025-07-24
+DHI,D. R. Horton,43257339904,Consumer Discretionary,True,233,2025-07-24
+KVUE,Kenvue,43197976576,Consumer Staples,True,234,2025-07-24
+CBRE,CBRE Group,43102998528,Real Estate,True,235,2025-07-24
+FANG,Diamondback Energy,42452013056,Energy,True,236,2025-07-24
+KMB,Kimberly-Clark,42389495808,Consumer Staples,True,237,2025-07-24
+FIS,Fidelity National Information Services,42247016448,Financials,True,238,2025-07-24
+MSCI,MSCI Inc.,42033287168,Financials,True,239,2025-07-24
+XEL,Xcel Energy,41976668160,Utilities,True,240,2025-07-24
+TTD,Trade Desk (The),41772314624,Communication Services,True,241,2025-07-24
+AME,Ametek,41493573632,Industrials,True,242,2025-07-24
+VRSK,Verisk Analytics,41418252288,Industrials,True,243,2025-07-24
+TTWO,Take-Two Interactive,41286742016,Communication Services,True,244,2025-07-24
+YUM,Yum! Brands,40535633920,Consumer Discretionary,True,245,2025-07-24
+CCL,Carnival,40378105856,Consumer Discretionary,True,246,2025-07-24
+ROK,Rockwell Automation,40240738304,Industrials,True,247,2025-07-24
+RMD,ResMed,40102486016,Health Care,True,248,2025-07-24
+ETR,Entergy,39344431104,Utilities,True,249,2025-07-24
+CSGP,CoStar Group,39218614272,Real Estate,True,250,2025-07-24
+SYY,Sysco,38712295424,Consumer Staples,True,251,2025-07-24
+EA,Electronic Arts,38354157568,Communication Services,True,252,2025-07-24
+EBAY,eBay Inc.,37996584960,Consumer Discretionary,True,253,2025-07-24
+CTSH,Cognizant,37823442944,Information Technology,True,254,2025-07-24
+CAH,Cardinal Health,37777793024,Health Care,True,255,2025-07-24
+FICO,Fair Isaac,37383983104,Information Technology,True,256,2025-07-24
+HSY,Hershey Company (The),37258874880,Consumer Staples,True,257,2025-07-24
+PRU,Prudential Financial,36926468096,Financials,True,258,2025-07-24
+ED,Consolidated Edison,36768206848,Utilities,True,259,2025-07-24
+MCHP,Microchip Technology,36595359744,Information Technology,True,260,2025-07-24
+TRGP,Targa Resources,35932614656,Energy,True,261,2025-07-24
+LVS,Las Vegas Sands,35889635328,Consumer Discretionary,True,262,2025-07-24
+VMC,Vulcan Materials Company,35855671296,Materials,True,263,2025-07-24
+DAL,Delta Air Lines,35722784768,Industrials,True,264,2025-07-24
+ODFL,Old Dominion,35458220032,Industrials,True,265,2025-07-24
+LYV,Live Nation Entertainment,35435622400,Communication Services,True,266,2025-07-24
+VICI,Vici Properties,35304681472,Real Estate,True,267,2025-07-24
+OTIS,Otis Worldwide,35205185536,Industrials,True,268,2025-07-24
+GEHC,GE HealthCare,35151831040,Health Care,True,269,2025-07-24
+IR,Ingersoll Rand,35056902144,Industrials,True,270,2025-07-24
+MLM,Martin Marietta Materials,35052343296,Materials,True,271,2025-07-24
+WEC,WEC Energy Group,34957938688,Utilities,True,272,2025-07-24
+HIG,Hartford (The),34956034048,Financials,True,273,2025-07-24
+WAB,Wabtec,34344988672,Industrials,True,274,2025-07-24
+A,Agilent Technologies,34187220992,Health Care,True,275,2025-07-24
+IQV,IQVIA,34139402240,Health Care,True,276,2025-07-24
+MPWR,Monolithic Power Systems,34138439680,Information Technology,True,277,2025-07-24
+KHC,Kraft Heinz,34062280704,Consumer Staples,True,278,2025-07-24
+DXCM,Dexcom,34011361280,Health Care,True,279,2025-07-24
+BRO,Brown & Brown,33898590208,Financials,True,280,2025-07-24
+RJF,Raymond James Financial,33660805120,Financials,True,281,2025-07-24
+WBD,Warner Bros. Discovery,33399945216,Communication Services,True,282,2025-07-24
+EXR,Extra Space Storage,33347745792,Real Estate,True,283,2025-07-24
+ACGL,Arch Capital Group,32978440192,Financials,True,284,2025-07-24
+NUE,Nucor,32635113472,Materials,True,285,2025-07-24
+STX,Seagate Technology,32411899904,Information Technology,True,286,2025-07-24
+EQT,EQT Corporation,32353812480,Energy,True,287,2025-07-24
+XYL,Xylem Inc.,31937388544,Industrials,True,288,2025-07-24
+STT,State Street Corporation,31691669504,Financials,True,289,2025-07-24
+TSCO,Tractor Supply,31462246400,Consumer Discretionary,True,290,2025-07-24
+SMCI,Supermicro,31344881664,Information Technology,True,291,2025-07-24
+DD,DuPont,31303727104,Materials,True,292,2025-07-24
+EL,Estée Lauder Companies (The),31215679488,Consumer Staples,True,293,2025-07-24
+MTB,M&T Bank,31087132672,Financials,True,294,2025-07-24
+STZ,Constellation Brands,30969018368,Consumer Staples,True,295,2025-07-24
+NRG,NRG Energy,30884714496,Utilities,True,296,2025-07-24
+WTW,Willis Towers Watson,30610518016,Financials,True,297,2025-07-24
+PCG,PG&E Corporation,30437871616,Utilities,True,298,2025-07-24
+EFX,Equifax,30303997952,Industrials,True,299,2025-07-24
+VTR,Ventas,30291843072,Real Estate,True,300,2025-07-24
+BR,Broadridge Financial Solutions,29716965376,Industrials,True,301,2025-07-24
+LEN,Lennar,29260382208,Consumer Discretionary,True,302,2025-07-24
+IRM,Iron Mountain,29141495808,Real Estate,True,303,2025-07-24
+UAL,United Airlines Holdings,29048473600,Industrials,True,304,2025-07-24
+IP,International Paper,28929030144,Materials,True,305,2025-07-24
+DTE,DTE Energy,28848875520,Utilities,True,306,2025-07-24
+AVB,AvalonBay Communities,28699965440,Real Estate,True,307,2025-07-24
+FITB,Fifth Third Bancorp,28504539136,Financials,True,308,2025-07-24
+KEYS,Keysight Technologies,28502970368,Information Technology,True,309,2025-07-24
+ROL,"Rollins, Inc.",28124008448,Industrials,True,310,2025-07-24
+K,Kellanova,27706550272,Consumer Staples,True,311,2025-07-24
+HUM,Humana,27664044032,Health Care,True,312,2025-07-24
+GIS,General Mills,27636709376,Consumer Staples,True,313,2025-07-24
+IT,Gartner,27410991104,Information Technology,True,314,2025-07-24
+AWK,American Water Works,27401134080,Utilities,True,315,2025-07-24
+AEE,Ameren,27122044928,Utilities,True,316,2025-07-24
+PPL,PPL Corporation,27042279424,Utilities,True,317,2025-07-24
+VRSN,Verisign,26918313984,Information Technology,True,318,2025-07-24
+HPE,Hewlett Packard Enterprise,26913632256,Information Technology,True,319,2025-07-24
+SYF,Synchrony Financial,26706137088,Financials,True,320,2025-07-24
+ADM,Archer Daniels Midland,26664974336,Consumer Staples,True,321,2025-07-24
+EQR,Equity Residential,26492280832,Real Estate,True,322,2025-07-24
+LULU,Lululemon Athletica,26210215936,Consumer Discretionary,True,323,2025-07-24
+MTD,Mettler Toledo,26201915392,Health Care,True,324,2025-07-24
+PPG,PPG Industries,26106664960,Materials,True,325,2025-07-24
+WRB,W. R. Berkley Corporation,26003048448,Financials,True,326,2025-07-24
+TDY,Teledyne Technologies,25769334784,Information Technology,True,327,2025-07-24
+CBOE,Cboe Global Markets,25749975040,Financials,True,328,2025-07-24
+VLTO,Veralto,25596604416,Industrials,True,329,2025-07-24
+DOV,Dover Corporation,25587720192,Industrials,True,330,2025-07-24
+SBAC,SBA Communications,25262467072,Real Estate,True,331,2025-07-24
+SW,Smurfit Westrock,25072283648,Materials,True,332,2025-07-24
+ATO,Atmos Energy,25050183680,Utilities,True,333,2025-07-24
+CNP,CenterPoint Energy,24699228160,Utilities,True,334,2025-07-24
+NTRS,Northern Trust,24623159296,Financials,True,335,2025-07-24
+ES,Eversource Energy,24398039040,Utilities,True,336,2025-07-24
+HBAN,Huntington Bancshares,24392409088,Financials,True,337,2025-07-24
+PTC,PTC Inc.,24236693504,Information Technology,True,338,2025-07-24
+FOXA,Fox Corporation (Class A),24229580800,Communication Services,True,339,2025-07-24
+EXPE,Expedia Group,24214007808,Consumer Discretionary,True,340,2025-07-24
+FOX,Fox Corporation (Class B),24212629504,Communication Services,True,341,2025-07-24
+TYL,Tyler Technologies,24145709056,Information Technology,True,342,2025-07-24
+HPQ,HP Inc.,24129925120,Information Technology,True,343,2025-07-24
+WDC,Western Digital,24079558656,Information Technology,True,344,2025-07-24
+CHD,Church & Dwight,23957825536,Consumer Staples,True,345,2025-07-24
+FE,FirstEnergy,23894257664,Utilities,True,346,2025-07-24
+DLTR,Dollar Tree,23835170816,Consumer Staples,True,347,2025-07-24
+CDW,CDW Corporation,23812599808,Information Technology,True,348,2025-07-24
+DRI,Darden Restaurants,23734495232,Consumer Discretionary,True,349,2025-07-24
+DG,Dollar General,23712651264,Consumer Staples,True,350,2025-07-24
+EXE,Expand Energy,23702708224,Energy,True,351,2025-07-24
+TROW,T. Rowe Price,23697188864,Financials,True,352,2025-07-24
+GDDY,GoDaddy,23694327808,Information Technology,True,353,2025-07-24
+RF,Regions Financial Corporation,23641858048,Financials,True,354,2025-07-24
+CPAY,Corpay,23513073664,Financials,True,355,2025-07-24
+JBL,Jabil,23439542272,Information Technology,True,356,2025-07-24
+HUBB,Hubbell Incorporated,23350511616,Industrials,True,357,2025-07-24
+LII,Lennox International,23341502464,Industrials,True,358,2025-07-24
+ON,ON Semiconductor,23167543296,Information Technology,True,359,2025-07-24
+CINF,Cincinnati Financial,23112671232,Financials,True,360,2025-07-24
+ULTA,Ulta Beauty,23081811968,Consumer Discretionary,True,361,2025-07-24
+PHM,PulteGroup,22892486656,Consumer Discretionary,True,362,2025-07-24
+ZM,Zoom Communications Inc.,22881703936,Technology,False,363,2025-07-24
+TPR,"Tapestry, Inc.",22519826432,Consumer Discretionary,True,364,2025-07-24
+LH,Labcorp,22405652480,Health Care,True,365,2025-07-24
+AMCR,Amcor,22363480064,Materials,True,366,2025-07-24
+STE,Steris,22354808832,Health Care,True,367,2025-07-24
+TPL,Texas Pacific Land Corporation,22284808192,Energy,True,368,2025-07-24
+WSM,"Williams-Sonoma, Inc.",22206058496,Consumer Discretionary,True,369,2025-07-24
+CMS,CMS Energy,21803147264,Utilities,True,370,2025-07-24
+NVR,"NVR, Inc.",21627398144,Consumer Discretionary,True,371,2025-07-24
+DVN,Devon Energy,21381928960,Energy,True,372,2025-07-24
+CFG,Citizens Financial Group,21326856192,Financials,True,373,2025-07-24
+LDOS,Leidos,21013377024,Industrials,True,374,2025-07-24
+NTAP,NetApp,20970305536,Information Technology,True,375,2025-07-24
+KEY,KeyCorp,20580325376,Financials,True,376,2025-07-24
+GPN,Global Payments,20254234624,Financials,True,377,2025-07-24
+PODD,Insulet Corporation,20168036352,Health Care,True,378,2025-07-24
+TRMB,Trimble Inc.,20086640640,Information Technology,True,379,2025-07-24
+WST,West Pharmaceutical Services,20052051968,Health Care,True,380,2025-07-24
+ESS,Essex Property Trust,19845545984,Real Estate,True,381,2025-07-24
+EIX,Edison International,19784564736,Utilities,True,382,2025-07-24
+NI,NiSource,19722457088,Utilities,True,383,2025-07-24
+INVH,Invitation Homes,19687921664,Real Estate,True,384,2025-07-24
+LYB,LyondellBasell,19508979712,Materials,True,385,2025-07-24
+BIIB,Biogen,19428147200,Health Care,True,386,2025-07-24
+IFF,International Flavors & Fragrances,19409344512,Materials,True,387,2025-07-24
+FSLR,First Solar,19381135360,Information Technology,True,388,2025-07-24
+HAL,Halliburton,19274811392,Energy,True,389,2025-07-24
+TSN,Tyson Foods,19236634624,Consumer Staples,True,390,2025-07-24
+DGX,Quest Diagnostics,19190054912,Health Care,True,391,2025-07-24
+ERIE,Erie Indemnity,19187255296,Financials,True,392,2025-07-24
+MKC,McCormick & Company,19175249920,Consumer Staples,True,393,2025-07-24
+ZBH,Zimmer Biomet,19165536256,Health Care,True,394,2025-07-24
+L,Loews Corporation,19136948224,Financials,True,395,2025-07-24
+LUV,Southwest Airlines,18953742336,Industrials,True,396,2025-07-24
+GEN,Gen Digital,18929420288,Information Technology,True,397,2025-07-24
+STLD,Steel Dynamics,18828421120,Materials,True,398,2025-07-24
+WY,Weyerhaeuser,18625011712,Real Estate,True,399,2025-07-24
+PKG,Packaging Corporation of America,18529581056,Materials,True,400,2025-07-24
+GPC,Genuine Parts Company,18528446464,Consumer Discretionary,True,401,2025-07-24
+MAA,Mid-America Apartment Communities,18219497472,Real Estate,True,402,2025-07-24
+CTRA,Coterra,18135080960,Energy,True,403,2025-07-24
+PFG,Principal Financial Group,18009264128,Financials,True,404,2025-07-24
+RL,Ralph Lauren Corporation,17890236416,Consumer Discretionary,True,405,2025-07-24
+WAT,Waters Corporation,17761681408,Health Care,True,406,2025-07-24
+DOW,Dow Inc.,17721030656,Materials,True,407,2025-07-24
+NWSA,News Corp (Class A),17401262080,Communication Services,True,408,2025-07-24
+FTV,Fortive,17354375168,Industrials,True,409,2025-07-24
+FFIV,"F5, Inc.",17340321792,Information Technology,True,410,2025-07-24
+NWS,News Corp (Class B),17339412480,Communication Services,True,411,2025-07-24
+SNA,Snap-on,17231134720,Industrials,True,412,2025-07-24
+J,Jacobs Solutions,17077773312,Industrials,True,413,2025-07-24
+ZBRA,Zebra Technologies,16954823680,Information Technology,True,414,2025-07-24
+PNR,Pentair,16860304384,Industrials,True,415,2025-07-24
+LNT,Alliant Energy,16750883840,Utilities,True,416,2025-07-24
+RIVN,"Rivian Automotive, Inc.",16555392000,Consumer Cyclical,False,417,2025-07-24
+BALL,Ball Corporation,16353789952,Materials,True,418,2025-07-24
+DOCU,"DocuSign, Inc.",16231721984,Technology,False,419,2025-07-24
+CLX,Clorox,16197909504,Consumer Staples,True,420,2025-07-24
+DPZ,Domino's,16171218944,Consumer Discretionary,True,421,2025-07-24
+HRL,Hormel Foods,16111922176,Consumer Staples,True,422,2025-07-24
+EVRG,Evergy,16053448704,Utilities,True,423,2025-07-24
+EXPD,Expeditors International,16001003520,Industrials,True,424,2025-07-24
+FDS,FactSet,15934053376,Financials,True,425,2025-07-24
+DECK,Deckers Brands,15681814528,Consumer Discretionary,True,426,2025-07-24
+BG,Bunge Global,15387307008,Consumer Staples,True,427,2025-07-24
+APTV,Aptiv,15341255680,Consumer Discretionary,True,428,2025-07-24
+UDR,"UDR, Inc.",15272107008,Real Estate,True,429,2025-07-24
+CF,CF Industries,15147934720,Materials,True,430,2025-07-24
+OMC,Omnicom Group,14928294912,Communication Services,True,431,2025-07-24
+KIM,Kimco Realty,14869382144,Real Estate,True,432,2025-07-24
+JBHT,J.B. Hunt,14852407296,Industrials,True,433,2025-07-24
+BAX,Baxter International,14764045312,Health Care,True,434,2025-07-24
+BF-B,Brown–Forman,14736473088,Consumer Staples,True,435,2025-07-24
+HOLX,Hologic,14730053632,Health Care,True,436,2025-07-24
+COO,Cooper Companies (The),14724059136,Health Care,True,437,2025-07-24
+BLDR,Builders FirstSource,14675286016,Industrials,True,438,2025-07-24
+ALGN,Align Technology,14654976000,Health Care,True,439,2025-07-24
+TER,Teradyne,14651158528,Information Technology,True,440,2025-07-24
+TXT,Textron,14611021824,Industrials,True,441,2025-07-24
+MAS,Masco,14223818752,Industrials,True,442,2025-07-24
+BBY,Best Buy,14221540352,Consumer Discretionary,True,443,2025-07-24
+EG,Everest Group,14116842496,Financials,True,444,2025-07-24
+ALLE,Allegion,14083688448,Industrials,True,445,2025-07-24
+ARE,Alexandria Real Estate Equities,14007657472,Real Estate,True,446,2025-07-24
+AVY,Avery Dennison,13950435328,Materials,True,447,2025-07-24
+IEX,IDEX Corporation,13874521088,Industrials,True,448,2025-07-24
+TKO,TKO Group Holdings,13733580800,Communication Services,True,449,2025-07-24
+INCY,Incyte,13644748800,Health Care,True,450,2025-07-24
+PAYC,Paycom,13329363968,Industrials,True,451,2025-07-24
+CNC,Centene Corporation,13315856384,Health Care,True,452,2025-07-24
+ROKU,"Roku, Inc.",13207093248,Communication Services,False,453,2025-07-24
+JKHY,Jack Henry & Associates,13172414464,Financials,True,454,2025-07-24
+MRNA,Moderna,13153095680,Health Care,True,455,2025-07-24
+DOC,Healthpeak Properties,13109594112,Real Estate,True,456,2025-07-24
+REG,Regency Centers,13063023616,Real Estate,True,457,2025-07-24
+BEN,Franklin Resources,12990878720,Financials,True,458,2025-07-24
+SOLV,Solventum,12790850560,Health Care,True,459,2025-07-24
+BXP,"BXP, Inc.",12502800384,Real Estate,True,460,2025-07-24
+NDSN,Nordson Corporation,12383925248,Industrials,True,461,2025-07-24
+POOL,Pool Corporation,12268817408,Consumer Discretionary,True,462,2025-07-24
+CHRW,C.H. Robinson,12249477120,Industrials,True,463,2025-07-24
+CPT,Camden Property Trust,12136796160,Real Estate,True,464,2025-07-24
+RVTY,Revvity,12019204096,Health Care,True,465,2025-07-24
+MOS,Mosaic Company (The),11861267456,Materials,True,466,2025-07-24
+SJM,J.M. Smucker Company (The),11590150144,Consumer Staples,True,467,2025-07-24
+HST,Host Hotels & Resorts,11552130048,Real Estate,True,468,2025-07-24
+AKAM,Akamai Technologies,11487938560,Information Technology,True,469,2025-07-24
+WYNN,Wynn Resorts,11338881024,Consumer Discretionary,True,470,2025-07-24
+SWK,Stanley Black & Decker,11246088192,Industrials,True,471,2025-07-24
+VTRS,Viatris,10973907968,Health Care,True,472,2025-07-24
+PNW,Pinnacle West Capital,10967992320,Utilities,True,473,2025-07-24
+DVA,DaVita,10941282304,Health Care,True,474,2025-07-24
+SWKS,Skyworks Solutions,10860331008,Information Technology,True,475,2025-07-24
+GL,Globe Life,10856042496,Financials,True,476,2025-07-24
+HAS,Hasbro,10516681728,Consumer Discretionary,True,477,2025-07-24
+AOS,A. O. Smith,10507539456,Industrials,True,478,2025-07-24
+NCLH,Norwegian Cruise Line Holdings,10499964928,Consumer Discretionary,True,479,2025-07-24
+HII,Huntington Ingalls Industries,10332831744,Industrials,True,480,2025-07-24
+TAP,Molson Coors Beverage Company,10291306496,Consumer Staples,True,481,2025-07-24
+MGM,MGM Resorts,10167486464,Consumer Discretionary,True,482,2025-07-24
+WBA,Walgreens Boots Alliance,10031852544,Consumer Staples,True,483,2025-07-24
+UHS,Universal Health Services,10017904640,Health Care,True,484,2025-07-24
+ALB,Albemarle Corporation,9904703488,Materials,True,485,2025-07-24
+AES,AES Corporation,9824537600,Utilities,True,486,2025-07-24
+CPB,Campbell's Company (The),9766737920,Consumer Staples,True,487,2025-07-24
+IPG,Interpublic Group of Companies (The),9727727616,Communication Services,True,488,2025-07-24
+EPAM,EPAM Systems,9571473408,Information Technology,True,489,2025-07-24
+IVZ,Invesco,9557780480,Financials,True,490,2025-07-24
+DAY,Dayforce,9498529792,Industrials,True,491,2025-07-24
+AIZ,Assurant,9365222400,Financials,True,492,2025-07-24
+PARA,Paramount Global,9349028864,Communication Services,True,493,2025-07-24
+CAG,Conagra Brands,9214649344,Consumer Staples,True,494,2025-07-24
+TECH,Bio-Techne,9166167040,Health Care,True,495,2025-07-24
+HSIC,Henry Schein,9077863424,Health Care,True,496,2025-07-24
+GNRC,Generac,9062526976,Industrials,True,497,2025-07-24
+KMX,CarMax,9037335552,Consumer Discretionary,True,498,2025-07-24
+EMN,Eastman Chemical Company,8928522240,Materials,True,499,2025-07-24
+CRL,Charles River Laboratories,8698390528,Health Care,True,500,2025-07-24
+MOH,Molina Healthcare,8575523840,Health Care,True,501,2025-07-24
+MTCH,Match Group,8358493696,Communication Services,True,502,2025-07-24
+FRT,Federal Realty Investment Trust,8227258880,Real Estate,True,503,2025-07-24
+LKQ,LKQ Corporation,8191035904,Consumer Discretionary,True,504,2025-07-24
+LW,Lamb Weston,8160739328,Consumer Staples,True,505,2025-07-24
+MKTX,MarketAxess,8015613440,Financials,True,506,2025-07-24
+MHK,Mohawk Industries,7252865024,Consumer Discretionary,True,507,2025-07-24
+APA,APA Corporation,6964307968,Energy,True,508,2025-07-24
+CZR,Caesars Entertainment,5960363008,Consumer Discretionary,True,509,2025-07-24
+ENPH,Enphase Energy,4643621888,Information Technology,True,510,2025-07-24

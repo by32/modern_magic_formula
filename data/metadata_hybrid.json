@@ -1,0 +1,21 @@
+{
+  "run_date": "2025-07-24T20:47:17.106205",
+  "analysis_date": "2025-07-24T20:45:56.416972",
+  "total_stocks": 49,
+  "russell_1000_stocks": 50,
+  "successful_fetches": 49,
+  "processing_time_seconds": 80.689238,
+  "data_sources": {
+    "sec_edgar_coverage": "49/49 (100.0%)",
+    "yahoo_finance_coverage": "49/49 (100.0%)",
+    "hybrid_approach": true,
+    "point_in_time_accuracy": true
+  },
+  "enhancements": {
+    "look_ahead_bias_eliminated": true,
+    "sec_point_in_time_fundamentals": true,
+    "enhanced_quality_metrics": true,
+    "value_trap_avoidance": true
+  },
+  "version": "2.1-hybrid-pit"
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "timestamp": "2025-07-24T23:20:16.591007",
+    "overall_score": 0.8181818181818182,
+    "record_count": 49,
+    "has_anomalies": false,
+    "has_alerts": false
+  },
+  {
+    "timestamp": "2025-07-24T23:20:28.968464",
+    "overall_score": 0.8181818181818182,
+    "record_count": 49,
+    "has_anomalies": false,
+    "has_alerts": false
+  }
+]

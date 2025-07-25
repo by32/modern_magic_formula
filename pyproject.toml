@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
+    "edgartools>=4.4.4",
     "pandas>=2.3.1",
     "requests>=2.32.4",
     "scipy>=1.16.0",
