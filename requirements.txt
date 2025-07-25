@@ -1,6 +1,7 @@
 fastapi
 uvicorn[standard]
 streamlit
+plotly
 pandas
 sqlalchemy
 psycopg2-binary
@@ -9,3 +10,7 @@ pytest
 yfinance
 fmp_python
 finnhub-python
+numpy
+scipy
+scikit-learn
+great-expectations
