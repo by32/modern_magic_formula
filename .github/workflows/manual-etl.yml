@@ -1,0 +1,295 @@
+name: 🔧 Manual ETL Trigger
+# On-demand data updates and testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'ETL Mode'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+        - test
+        - full
+        - emergency
+      
+      reason:
+        description: 'Reason for manual update'
+        required: false
+        default: 'Manual testing'
+        type: string
+      
+      skip_validation:
+        description: 'Skip data quality validation'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  manual-etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # Extended timeout for full mode
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: 📦 Install UV Package Manager
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        
+    - name: 🔧 Install Dependencies
+      run: |
+        uv sync
+        
+    - name: 📊 Configure ETL Mode
+      id: config
+      run: |
+        mode="${{ github.event.inputs.mode }}"
+        reason="${{ github.event.inputs.reason }}"
+        
+        echo "🎯 ETL Mode: $mode"
+        echo "📝 Reason: $reason"
+        
+        case $mode in
+          "test")
+            echo "🧪 Test mode - processing 50 stocks"
+            echo "stocks=50" >> $GITHUB_OUTPUT
+            echo "timeout=600" >> $GITHUB_OUTPUT
+            sed -i 's/test_mode = False/test_mode = True/' etl/main_russell_hybrid.py
+            ;;
+          "full")
+            echo "🚀 Full mode - processing all Russell 1000 stocks"
+            echo "stocks=1000" >> $GITHUB_OUTPUT
+            echo "timeout=3600" >> $GITHUB_OUTPUT
+            ;;
+          "emergency")
+            echo "🚨 Emergency mode - quick update with current data"
+            echo "stocks=200" >> $GITHUB_OUTPUT
+            echo "timeout=1200" >> $GITHUB_OUTPUT
+            # Set partial mode for emergency updates
+            sed -i 's/russell_stocks\[:50\]/russell_stocks[:200]/' etl/main_russell_hybrid.py
+            ;;
+        esac
+        
+    - name: 🔍 Pre-ETL System Check
+      run: |
+        echo "🔍 Running pre-ETL system checks..."
+        
+        # Check available disk space
+        df -h
+        
+        # Check memory
+        free -h
+        
+        # Verify dependencies
+        uv run python -c "
+        import pandas, numpy, yfinance, requests
+        from etl.hybrid_fundamentals import HybridFundamentals
+        from data_quality.monitoring import DataQualityMonitor
+        print('✅ All dependencies verified')
+        "
+        
+        # Test API connectivity
+        uv run python -c "
+        import yfinance as yf
+        import requests
+        
+        # Test Yahoo Finance
+        spy = yf.Ticker('SPY')
+        info = spy.info
+        print(f'✅ Yahoo Finance: SPY = {info.get(\"longName\", \"Connected\")}')
+        
+        # Test SEC EDGAR API
+        response = requests.get('https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json', 
+                               headers={'User-Agent': 'Magic Formula ETL testing@example.com'})
+        if response.status_code == 200:
+            print('✅ SEC EDGAR API: Connected')
+        else:
+            print(f'⚠️ SEC EDGAR API: Status {response.status_code}')
+        "
+        
+    - name: 📊 Run Manual ETL
+      id: etl
+      run: |
+        mode="${{ github.event.inputs.mode }}"
+        timeout_seconds="${{ steps.config.outputs.timeout }}"
+        
+        echo "🚀 Starting $mode ETL (timeout: ${timeout_seconds}s)..."
+        
+        # Run ETL with configured timeout
+        if timeout $timeout_seconds uv run python -m etl.main_russell_hybrid > manual_etl.log 2>&1; then
+          echo "✅ ETL completed successfully"
+          echo "success=true" >> $GITHUB_OUTPUT
+        else
+          echo "❌ ETL failed or timed out"
+          echo "success=false" >> $GITHUB_OUTPUT
+          
+          # Show last 50 lines of log for debugging
+          echo "📋 ETL Log (last 50 lines):"
+          tail -50 manual_etl.log
+          exit 1
+        fi
+        
+    - name: 📈 Validate Results
+      if: steps.etl.outputs.success == 'true' && github.event.inputs.skip_validation != 'true'
+      run: |
+        echo "🔍 Validating ETL results..."
+        
+        uv run python -c "
+        import pandas as pd
+        import os
+        from data_quality.monitoring import DataQualityMonitor
+        
+        # Load results
+        if not os.path.exists('data/latest_screening_hybrid.csv'):
+            raise Exception('ETL output file not found')
+            
+        data = pd.read_csv('data/latest_screening_hybrid.csv')
+        
+        # Basic validation
+        min_stocks = 50 if '${{ github.event.inputs.mode }}' == 'test' else 100
+        if len(data) < min_stocks:
+            raise Exception(f'Too few stocks: {len(data)} < {min_stocks}')
+            
+        # Check required columns
+        required_cols = ['ticker', 'magic_formula_rank', 'earnings_yield', 'roc', 'f_score']
+        missing_cols = [col for col in required_cols if col not in data.columns]
+        if missing_cols:
+            raise Exception(f'Missing columns: {missing_cols}')
+            
+        # Quality check
+        if '${{ github.event.inputs.mode }}' != 'emergency':
+            monitor = DataQualityMonitor()
+            results = monitor.run_monitoring_check()
+            quality_score = results.get('overall_score', 0)
+            
+            if quality_score < 0.70:
+                print(f'⚠️ Quality score low: {quality_score:.1%}')
+            else:
+                print(f'✅ Quality score good: {quality_score:.1%}')
+        
+        print(f'✅ Validation passed - {len(data)} stocks processed')
+        "
+        
+    - name: 📋 Generate Manual Update Report
+      if: steps.etl.outputs.success == 'true'
+      run: |
+        mode="${{ github.event.inputs.mode }}"
+        reason="${{ github.event.inputs.reason }}"
+        
+        uv run python -c "
+        import pandas as pd
+        from datetime import datetime
+        
+        data = pd.read_csv('data/latest_screening_hybrid.csv')
+        
+        report = f'''# 🔧 Manual ETL Update Report
+        
+        **Execution Details**:
+        - 🎯 Mode: {mode}
+        - 📝 Reason: {reason}
+        - 📅 Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
+        - 📊 Stocks processed: {len(data):,}
+        
+        **Top 10 Magic Formula Stocks**:
+        '''
+        
+        top_10 = data.sort_values('magic_formula_rank').head(10)
+        for i, (_, row) in enumerate(top_10.iterrows()):
+            report += f'''
+        {i+1:2d}. **{row['ticker']}** - {row['company_name'][:35]}
+            EY: {row['earnings_yield']:.1%} | ROC: {row['roc']:.1%} | F-Score: {row['f_score']}'''
+        
+        if len(data) >= 100:
+            report += '''
+        
+        **Status**: ✅ Ready for production use
+        **Access**: https://modernmagicformula.streamlit.app
+        '''
+        else:
+            report += '''
+        
+        **Status**: 🧪 Test data only - not for production use
+        '''
+        
+        with open('manual_update_report.md', 'w') as f:
+            f.write(report)
+            
+        print('📄 Manual update report generated')
+        "
+        
+    - name: 💾 Commit Manual Updates
+      if: steps.etl.outputs.success == 'true' && github.event.inputs.mode != 'test'
+      run: |
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add updated data files
+        git add data/latest_screening_hybrid.csv
+        git add data/latest_screening_hybrid.json
+        git add data/metadata_hybrid.json
+        git add manual_update_report.md
+        
+        if git diff --staged --quiet; then
+          echo "📊 No changes to commit"
+        else
+          mode="${{ github.event.inputs.mode }}"
+          reason="${{ github.event.inputs.reason }}"
+          
+          git commit -m "$(cat <<EOF
+        🔧 Manual $mode ETL update
+        
+        Reason: $reason
+        Processed: $(wc -l < data/latest_screening_hybrid.csv) stocks
+        Timestamp: $(date -u)
+        
+        🤖 Manual trigger by GitHub Actions
+        EOF
+        )"
+          
+          git push
+          echo "✅ Manual updates committed"
+        fi
+        
+    - name: 📤 Upload Artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: manual-etl-${{ github.event.inputs.mode }}-${{ github.run_number }}
+        path: |
+          manual_etl.log
+          manual_update_report.md
+        retention-days: 30
+        
+    - name: 📊 Summary Report
+      if: always()
+      run: |
+        mode="${{ github.event.inputs.mode }}"
+        success="${{ steps.etl.outputs.success }}"
+        
+        echo "📋 MANUAL ETL SUMMARY"
+        echo "===================="
+        echo "Mode: $mode"
+        echo "Success: $success"
+        echo "Reason: ${{ github.event.inputs.reason }}"
+        echo "Run ID: ${{ github.run_id }}"
+        
+        if [ "$success" = "true" ]; then
+          echo "✅ ETL completed successfully"
+          if [ "$mode" != "test" ]; then
+            echo "🚀 Streamlit app will auto-deploy with new data"
+          fi
+        else
+          echo "❌ ETL failed - check logs for details"
+        fi

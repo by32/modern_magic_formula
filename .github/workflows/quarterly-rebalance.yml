@@ -1,0 +1,234 @@
+name: 📅 Quarterly Rebalance
+# Major quarterly updates including Russell 1000 universe refresh
+
+on:
+  schedule:
+    # Run quarterly: January 15, April 15, July 15, October 15 at 6 AM UTC
+    - cron: '0 6 15 1,4,7,10 *'
+  
+  workflow_dispatch:
+    inputs:
+      update_universe:
+        description: 'Update Russell 1000 universe (July rebalancing)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  quarterly-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90  # Extended timeout for universe updates
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: 📦 Install UV Package Manager
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        
+    - name: 🔧 Install Dependencies
+      run: |
+        uv sync
+        
+    - name: 📊 Check Current Quarter
+      id: quarter
+      run: |
+        month=$(date +%m)
+        
+        if [ "$month" = "01" ]; then
+          echo "quarter=Q1" >> $GITHUB_OUTPUT
+          echo "season=earnings_q4" >> $GITHUB_OUTPUT
+        elif [ "$month" = "04" ]; then
+          echo "quarter=Q2" >> $GITHUB_OUTPUT  
+          echo "season=earnings_q1" >> $GITHUB_OUTPUT
+        elif [ "$month" = "07" ]; then
+          echo "quarter=Q3" >> $GITHUB_OUTPUT
+          echo "season=russell_rebalance" >> $GITHUB_OUTPUT
+        elif [ "$month" = "10" ]; then
+          echo "quarter=Q4" >> $GITHUB_OUTPUT
+          echo "season=earnings_q3" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "🗓️ Processing ${{ steps.quarter.outputs.quarter }} update"
+        
+    - name: 🔄 Update Russell 1000 Universe
+      if: steps.quarter.outputs.season == 'russell_rebalance' || github.event.inputs.update_universe == 'true'
+      run: |
+        echo "🏢 Updating Russell 1000 universe for annual rebalancing..."
+        
+        # Refresh Russell 1000 universe (July rebalancing)
+        uv run python -c "
+        from etl.russell_1000 import fetch_russell_1000_list
+        import json
+        from datetime import datetime
+        
+        print('📋 Fetching latest Russell 1000 composition...')
+        
+        # Get fresh Russell 1000 list
+        russell_list = fetch_russell_1000_list()
+        
+        if russell_list and len(russell_list) > 900:
+            # Save updated universe
+            cache_data = {
+                'russell_1000_stocks': russell_list,
+                'cache_date': datetime.now().isoformat(),
+                'rebalance_date': '2024-07-01',  # Update with actual rebalance date
+                'source': 'ftse_russell_annual_rebalance'
+            }
+            
+            with open('data/russell_1000_cache.json', 'w') as f:
+                json.dump(cache_data, f, indent=2)
+                
+            print(f'✅ Updated Russell 1000 universe: {len(russell_list)} stocks')
+        else:
+            print('⚠️ Failed to update Russell 1000 universe')
+            raise Exception('Russell 1000 update failed')
+        "
+        
+    - name: 📊 Run Enhanced ETL
+      run: |
+        echo "🚀 Running quarterly ETL with enhanced analysis..."
+        
+        # Run full ETL pipeline
+        uv run python -m etl.main_russell_hybrid
+        
+    - name: 🎯 Generate Quarterly Report
+      run: |
+        echo "📋 Generating comprehensive quarterly report..."
+        
+        uv run python -c "
+        import pandas as pd
+        import numpy as np
+        from datetime import datetime
+        
+        # Load data
+        data = pd.read_csv('data/latest_screening_hybrid.csv')
+        
+        # Quarterly report
+        quarter = '${{ steps.quarter.outputs.quarter }}'
+        season = '${{ steps.quarter.outputs.season }}'
+        
+        report = f'''# 📊 {quarter} {datetime.now().year} Quarterly Report
+        
+        ## 🏆 Magic Formula Performance Update
+        
+        **Dataset Overview**:
+        - 📈 Total stocks analyzed: {len(data):,}
+        - 🏛️ SEC EDGAR coverage: {(data['sec_data_available'].sum()/len(data)*100):.1f}%
+        - 🔍 Data quality score: Latest monitoring results
+        
+        **Sector Distribution** (Top Magic Formula stocks):
+        '''
+        
+        # Top 50 stocks sector analysis
+        top_50 = data.sort_values('magic_formula_rank').head(50)
+        sector_dist = top_50['sector'].value_counts()
+        
+        for sector, count in sector_dist.head(8).items():
+            pct = count / len(top_50) * 100
+            report += f'\\n- **{sector}**: {count} stocks ({pct:.1f}%)'
+        
+        report += f'''
+        
+        ## 🎯 Top 20 Magic Formula Recommendations
+        
+        | Rank | Ticker | Company | EY | ROC | F-Score | Sector |
+        |------|--------|---------|----|----|---------|---------|'''
+        
+        top_20 = data.sort_values('magic_formula_rank').head(20)
+        for i, (_, row) in enumerate(top_20.iterrows()):
+            company = row['company_name'][:25] + '...' if len(row['company_name']) > 25 else row['company_name']
+            report += f'''
+        | {i+1:2d} | {row['ticker']} | {company} | {row['earnings_yield']:.1%} | {row['roc']:.1%} | {row['f_score']} | {row['sector'][:15]} |'''
+        
+        # Special quarterly notes
+        if season == 'russell_rebalance':
+            report += '''
+        
+        ## 🔄 Russell 1000 Rebalancing Notes
+        - ✅ Russell 1000 universe updated for annual rebalancing
+        - 📊 New stock additions/removals incorporated
+        - 🎯 Portfolio recommendations refreshed with new universe
+        '''
+        elif 'earnings' in season:
+            report += f'''
+        
+        ## 📈 {season.replace('_', ' ').title()} Season Update
+        - 📊 Latest quarterly earnings incorporated
+        - 💰 Updated financial metrics and F-Scores
+        - 🔍 Enhanced Magic Formula rankings with fresh data
+        '''
+        
+        report += f'''
+        
+        ## 🚀 DIY Magic Formula Access
+        
+        **Individual Investors**: Get your personalized 20-stock Magic Formula picks at:
+        👉 **https://modernmagicformula.streamlit.app**
+        
+        **Next Update**: {quarter} earnings season / Monthly refresh
+        
+        ---
+        *Generated automatically on {datetime.now().strftime('%B %d, %Y')} | Modern Magic Formula v2.0*
+        '''
+        
+        # Save report
+        with open('quarterly_report.md', 'w') as f:
+            f.write(report)
+            
+        print('📄 Quarterly report generated')
+        "
+        
+    - name: 💾 Commit Quarterly Updates
+      run: |
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add all updated files
+        git add data/
+        git add quarterly_report.md
+        
+        # Check for changes
+        if git diff --staged --quiet; then
+          echo "📊 No quarterly changes detected"
+        else
+          # Commit with quarterly message
+          quarter="${{ steps.quarter.outputs.quarter }}"
+          season="${{ steps.quarter.outputs.season }}"
+          
+          git commit -m "$(cat <<EOF
+        📅 $quarter $(date +'%Y') quarterly update
+        
+        Major quarterly refresh:
+        - Updated Magic Formula rankings for $season
+        - Enhanced data quality monitoring
+        - Generated comprehensive quarterly report
+        
+        🎯 Ready for DIY investors: https://modernmagicformula.streamlit.app
+        
+        🤖 Generated by GitHub Actions
+        EOF
+        )"
+          
+          git push
+          echo "✅ Quarterly updates committed and pushed"
+        fi
+        
+    - name: 📤 Upload Reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: quarterly-report-${{ steps.quarter.outputs.quarter }}
+        path: |
+          quarterly_report.md
+        retention-days: 90

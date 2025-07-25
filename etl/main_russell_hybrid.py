@@ -238,7 +238,7 @@ def run_russell_1000_hybrid_screening(as_of_date: Optional[datetime] = None):
     print(f"📋 Loaded {len(russell_stocks)} stocks from Russell 1000")
     
     # For testing, process a smaller subset first
-    test_mode = True
+    test_mode = False  # Changed to False for full Russell 1000 processing
     if test_mode:
         print("🧪 Test mode: Processing first 50 stocks...")
         russell_stocks = russell_stocks[:50]

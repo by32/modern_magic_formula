@@ -352,15 +352,25 @@ uv run python tax_analysis/after_tax_tracker.py
 
 ## 🚀 Production Deployment
 
-### Automated Data Pipeline
-```bash
-# Daily data update with quality monitoring
-uv run python etl/main_russell_hybrid.py
-uv run python data_quality/monitoring.py
+### 🤖 Automated Data Pipeline
+**Complete GitHub Actions automation for hands-off operation:**
 
-# Weekly portfolio rebalancing analysis
-uv run python backtesting/run_extended_backtest.py
+| Frequency | Workflow | Purpose | Timing |
+|-----------|----------|---------|---------|
+| **📅 Monthly** | ETL Update | Fresh Magic Formula rankings | 1st @ 6 AM UTC |
+| **📅 Quarterly** | Rebalance | Earnings updates, Russell 1000 refresh | 15th @ 6 AM UTC |
+| **📅 Daily** | Quality Monitor | Health checks, anomaly detection | 12 PM UTC |
+| **🔧 Manual** | On-demand | Testing, emergency updates | As needed |
+
+**Auto-deployment**: All updates trigger Streamlit Cloud redeployment
+
+```bash
+# Manual ETL commands (automation handles these automatically):
+uv run python etl/main_russell_hybrid.py  # Full Russell 1000 update
+uv run python data_quality/monitoring.py  # Quality validation
 ```
+
+📋 **[View Automation Guide](docs/AUTOMATION.md)** for complete setup and monitoring details.
 
 ### Real-Time Monitoring
 ```bash

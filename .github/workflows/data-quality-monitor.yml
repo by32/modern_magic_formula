@@ -1,0 +1,256 @@
+name: 🔍 Data Quality Monitor
+# Continuous monitoring of data quality and system health
+
+on:
+  schedule:
+    # Run daily at 12 PM UTC to check data quality
+    - cron: '0 12 * * *'
+  
+  # Trigger after ETL updates
+  workflow_run:
+    workflows: ["📊 Monthly ETL Update", "📅 Quarterly Rebalance"]
+    types: [completed]
+  
+  workflow_dispatch:
+
+jobs:
+  quality-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: 📦 Install UV Package Manager
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        
+    - name: 🔧 Install Dependencies
+      run: |
+        uv sync --only-group=data-quality  # Minimal install for monitoring
+        
+    - name: 🔍 Run Data Quality Checks
+      id: quality
+      run: |
+        echo "🔍 Running comprehensive data quality monitoring..."
+        
+        uv run python -c "
+        import pandas as pd
+        import os
+        from datetime import datetime, timedelta
+        from data_quality.monitoring import DataQualityMonitor
+        import json
+        
+        # Check if data files exist
+        data_file = 'data/latest_screening_hybrid.csv'
+        if not os.path.exists(data_file):
+            print('❌ Data file not found - ETL may not have run')
+            exit(1)
+        
+        # Check data age
+        file_age = datetime.now() - datetime.fromtimestamp(os.path.getmtime(data_file))
+        if file_age > timedelta(days=35):  # Allow 35 days for monthly updates
+            print(f'⚠️ Data is stale: {file_age.days} days old')
+        
+        # Load and analyze data
+        data = pd.read_csv(data_file)
+        print(f'📊 Dataset: {len(data)} stocks')
+        
+        # Run quality monitoring
+        monitor = DataQualityMonitor()
+        results = monitor.run_monitoring_check()
+        
+        quality_score = results.get('overall_score', 0)
+        anomalies = results.get('anomalies', [])
+        alerts = results.get('alerts', [])
+        
+        print(f'🔍 Quality Score: {quality_score:.1%}')
+        print(f'🚨 Anomalies: {len(anomalies)}')
+        print(f'⚠️ Alerts: {len(alerts)}')
+        
+        # Create quality report
+        report = {
+            'timestamp': datetime.now().isoformat(),
+            'quality_score': quality_score,
+            'stock_count': len(data),
+            'data_age_days': file_age.days,
+            'anomalies': anomalies,
+            'alerts': alerts,
+            'status': 'PASS' if quality_score >= 0.75 and len(alerts) == 0 else 'FAIL'
+        }
+        
+        # Save quality report
+        with open('quality_report.json', 'w') as f:
+            json.dump(report, f, indent=2)
+        
+        # Set outputs for subsequent steps
+        with open('quality_summary.txt', 'w') as f:
+            f.write(f'Quality Score: {quality_score:.1%}\\n')
+            f.write(f'Stock Count: {len(data)}\\n')
+            f.write(f'Status: {report[\"status\"]}\\n')
+            if anomalies:
+                f.write(f'Anomalies: {len(anomalies)}\\n')
+            if alerts:
+                f.write(f'Alerts: {len(alerts)}\\n')
+        
+        # Exit with error code if quality is poor
+        if quality_score < 0.70 or len(alerts) > 3:
+            print('❌ Quality check failed')
+            exit(1)
+        else:
+            print('✅ Quality check passed')
+        " || echo "quality_failed=true" >> $GITHUB_OUTPUT
+        
+    - name: 📊 Generate Quality Dashboard
+      run: |
+        echo "📊 Generating quality dashboard..."
+        
+        uv run python -c "
+        import pandas as pd
+        import json
+        from datetime import datetime
+        from data_quality.monitoring import DataQualityMonitor
+        
+        # Load quality report
+        with open('quality_report.json', 'r') as f:
+            report = json.load(f)
+        
+        # Load historical quality data
+        monitor = DataQualityMonitor()
+        history = monitor.quality_history[-10:]  # Last 10 entries
+        
+        # Generate dashboard
+        dashboard = f'''# 📊 Data Quality Dashboard
+        
+        **Current Status**: {'✅ HEALTHY' if report['status'] == 'PASS' else '❌ ISSUES DETECTED'}
+        
+        ## 🔍 Latest Quality Metrics
+        
+        | Metric | Value | Status |
+        |--------|-------|--------|
+        | Quality Score | {report['quality_score']:.1%} | {'✅' if report['quality_score'] >= 0.80 else '⚠️' if report['quality_score'] >= 0.70 else '❌'} |
+        | Stock Count | {report['stock_count']:,} | {'✅' if report['stock_count'] >= 100 else '⚠️'} |
+        | Data Age | {report['data_age_days']} days | {'✅' if report['data_age_days'] <= 32 else '⚠️'} |
+        | Anomalies | {len(report['anomalies'])} | {'✅' if len(report['anomalies']) == 0 else '⚠️'} |
+        | Alerts | {len(report['alerts'])} | {'✅' if len(report['alerts']) == 0 else '❌'} |
+        
+        '''
+        
+        if report['anomalies']:
+            dashboard += f'''
+        ## 🚨 Detected Anomalies
+        '''
+            for anomaly in report['anomalies']:
+                dashboard += f'\\n- ⚠️ {anomaly}'
+        
+        if report['alerts']:
+            dashboard += f'''
+        ## ⚠️ Active Alerts
+        '''
+            for alert in report['alerts']:
+                dashboard += f'\\n- 🚨 {alert}'
+        
+        if len(history) >= 3:
+            dashboard += f'''
+        ## 📈 Quality Trend (Last 10 Updates)
+        
+        | Date | Score | Stock Count | Issues |
+        |------|-------|-------------|--------|'''
+            
+            for entry in history:
+                date = datetime.fromisoformat(entry['timestamp']).strftime('%m/%d')
+                issues = '🚨' if entry.get('has_alerts', False) else '⚠️' if entry.get('has_anomalies', False) else '✅'
+                dashboard += f'''
+        | {date} | {entry['overall_score']:.1%} | {entry['record_count']:,} | {issues} |'''
+        
+        dashboard += f'''
+        
+        ## 🎯 Recommendations
+        
+        '''
+        
+        if report['quality_score'] >= 0.85:
+            dashboard += '✅ **Excellent data quality** - No action needed\\n'
+        elif report['quality_score'] >= 0.75:
+            dashboard += '⚠️ **Good data quality** - Monitor for declining trends\\n'
+        else:
+            dashboard += '❌ **Poor data quality** - Investigation required\\n'
+        
+        if report['data_age_days'] > 32:
+            dashboard += '📅 **Stale data detected** - Run ETL update\\n'
+            
+        if len(report['anomalies']) > 0:
+            dashboard += f'🔍 **{len(report[\"anomalies\"])} anomalies detected** - Review data sources\\n'
+        
+        dashboard += f'''
+        
+        ---
+        *Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M UTC')} | [View Streamlit App](https://modernmagicformula.streamlit.app)*
+        '''
+        
+        with open('quality_dashboard.md', 'w') as f:
+            f.write(dashboard)
+            
+        print('📊 Quality dashboard generated')
+        "
+        
+    - name: 🚨 Alert on Quality Issues
+      if: steps.quality.outputs.quality_failed == 'true'
+      run: |
+        echo "🚨 Data quality issues detected!"
+        
+        # Read quality summary
+        cat quality_summary.txt
+        
+        echo ""
+        echo "🔗 Detailed report: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        
+        # In production, you would send alerts here:
+        # - Create GitHub issue
+        # - Send Slack notification
+        # - Email alert
+        # - Discord webhook
+        
+        echo "💡 Configure alert webhooks for production notifications"
+        
+    - name: 📤 Upload Quality Reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: quality-report-${{ github.run_number }}
+        path: |
+          quality_report.json
+          quality_dashboard.md
+          quality_summary.txt
+        retention-days: 60
+        
+    - name: 💾 Update Quality Dashboard
+      if: success()
+      run: |
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Commit quality dashboard
+        git add quality_dashboard.md
+        
+        if ! git diff --staged --quiet; then
+          git commit -m "📊 Update data quality dashboard
+          
+          Quality monitoring results:
+          - $(grep 'Quality Score:' quality_summary.txt)
+          - $(grep 'Stock Count:' quality_summary.txt)
+          - $(grep 'Status:' quality_summary.txt)
+          
+          🤖 Automated quality monitoring"
+          
+          git push
+          echo "✅ Quality dashboard updated"
+        fi
