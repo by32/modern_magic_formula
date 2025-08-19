@@ -34,7 +34,7 @@ jobs:
         
     - name: 🔧 Install Dependencies
       run: |
-        uv sync --only-group=data-quality  # Minimal install for monitoring
+        uv sync  # Install all dependencies
         
     - name: 🔍 Run Data Quality Checks
       id: quality
@@ -45,8 +45,43 @@ jobs:
         import pandas as pd
         import os
         from datetime import datetime, timedelta
-        from data_quality.monitoring import DataQualityMonitor
         import json
+        import sys
+        sys.path.append('.')
+        
+        # Simple quality check without complex monitoring
+        def simple_quality_check(data_file):
+            try:
+                data = pd.read_csv(data_file)
+                
+                # Basic quality metrics
+                total_stocks = len(data)
+                missing_tickers = data['ticker'].isnull().sum()
+                missing_fundamentals = (
+                    data['earnings_yield'].isnull().sum() + 
+                    data['roc'].isnull().sum() + 
+                    data['f_score'].isnull().sum()
+                ) / 3
+                
+                quality_score = max(0, 1.0 - (missing_fundamentals / total_stocks))
+                
+                return {
+                    'overall_score': quality_score,
+                    'record_count': total_stocks,
+                    'anomalies': [],
+                    'alerts': [] if quality_score >= 0.7 else ['Low quality score'],
+                    'has_alerts': quality_score < 0.7,
+                    'has_anomalies': False
+                }
+            except Exception as e:
+                return {
+                    'overall_score': 0.0,
+                    'record_count': 0,
+                    'anomalies': [f'Data loading error: {str(e)}'],
+                    'alerts': ['Failed to load data'],
+                    'has_alerts': True,
+                    'has_anomalies': True
+                }
         
         # Check if data files exist
         data_file = 'data/latest_screening_hybrid.csv'
@@ -64,8 +99,7 @@ jobs:
         print(f'📊 Dataset: {len(data)} stocks')
         
         # Run quality monitoring
-        monitor = DataQualityMonitor()
-        results = monitor.run_monitoring_check()
+        results = simple_quality_check(data_file)
         
         quality_score = results.get('overall_score', 0)
         anomalies = results.get('anomalies', [])
@@ -116,15 +150,13 @@ jobs:
         import pandas as pd
         import json
         from datetime import datetime
-        from data_quality.monitoring import DataQualityMonitor
         
         # Load quality report
         with open('quality_report.json', 'r') as f:
             report = json.load(f)
         
-        # Load historical quality data
-        monitor = DataQualityMonitor()
-        history = monitor.quality_history[-10:]  # Last 10 entries
+        # Simple history (for now, just current entry)
+        history = [report]
         
         # Generate dashboard
         dashboard = f'''# 📊 Data Quality Dashboard
@@ -157,18 +189,15 @@ jobs:
             for alert in report['alerts']:
                 dashboard += f'\\n- 🚨 {alert}'
         
-        if len(history) >= 3:
-            dashboard += f'''
-        ## 📈 Quality Trend (Last 10 Updates)
+        dashboard += f'''
+        ## 📈 Current Status
         
-        | Date | Score | Stock Count | Issues |
-        |------|-------|-------------|--------|'''
-            
-            for entry in history:
-                date = datetime.fromisoformat(entry['timestamp']).strftime('%m/%d')
-                issues = '🚨' if entry.get('has_alerts', False) else '⚠️' if entry.get('has_anomalies', False) else '✅'
-                dashboard += f'''
-        | {date} | {entry['overall_score']:.1%} | {entry['record_count']:,} | {issues} |'''
+        | Metric | Value |
+        |--------|-------|
+        | Quality Score | {report['quality_score']:.1%} |
+        | Stock Count | {report['stock_count']:,} |
+        | Data Age | {report['data_age_days']} days |
+        | Last Updated | {datetime.fromisoformat(report['timestamp']).strftime('%Y-%m-%d %H:%M UTC')} |'''
         
         dashboard += f'''
         

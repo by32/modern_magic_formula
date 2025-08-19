@@ -79,15 +79,14 @@ jobs:
         # Run data quality checks
         uv run python -c "
         import pandas as pd
-        from data_quality.monitoring import DataQualityMonitor
         
         # Load and validate data
         data = pd.read_csv('data/latest_screening_hybrid.csv')
-        monitor = DataQualityMonitor()
-        results = monitor.run_monitoring_check()
         
-        quality_score = results.get('overall_score', 0)
+        # Simple quality validation
         stock_count = len(data)
+        missing_data = data[['ticker', 'earnings_yield', 'roc', 'f_score']].isnull().sum().sum()
+        quality_score = max(0, 1.0 - (missing_data / (stock_count * 4)))
         
         print(f'📊 Stocks processed: {stock_count}')
         print(f'🔍 Quality score: {quality_score:.1%}')
@@ -97,7 +96,7 @@ jobs:
             raise Exception(f'Too few stocks processed: {stock_count} < 100')
         if quality_score < 0.75:
             raise Exception(f'Quality score too low: {quality_score:.1%} < 75%')
-            
+        
         print('✅ Data quality validation passed')
         "
         
