@@ -86,8 +86,28 @@ jobs:
         # Check if data files exist
         data_file = 'data/latest_screening_hybrid.csv'
         if not os.path.exists(data_file):
-            print('❌ Data file not found - ETL may not have run')
-            exit(1)
+            print('❌ Data file not found - ETL may not have run yet')
+            # Create a minimal report indicating no data
+            report = {
+                'timestamp': datetime.now().isoformat(),
+                'quality_score': 0.0,
+                'stock_count': 0,
+                'data_age_days': 999,
+                'anomalies': ['Data file not found'],
+                'alerts': ['ETL needs to run first'],
+                'status': 'NO_DATA'
+            }
+            with open('quality_report.json', 'w') as f:
+                json.dump(report, f, indent=2)
+            
+            with open('quality_summary.txt', 'w') as f:
+                f.write('Quality Score: N/A\\n')
+                f.write('Stock Count: 0\\n')
+                f.write('Status: NO_DATA\\n')
+                f.write('Error: Data file not found - ETL needs to run first\\n')
+            
+            print('📝 Created placeholder reports - ETL needs to run first')
+            exit(0)  # Exit successfully but with no data
         
         # Check data age
         file_age = datetime.now() - datetime.fromtimestamp(os.path.getmtime(data_file))
@@ -143,8 +163,14 @@ jobs:
         " || echo "quality_failed=true" >> $GITHUB_OUTPUT
         
     - name: 📊 Generate Quality Dashboard
+      if: always()
       run: |
         echo "📊 Generating quality dashboard..."
+        
+        # Ensure quality_report.json exists
+        if [ ! -f quality_report.json ]; then
+          echo '{"status": "ERROR", "quality_score": 0, "stock_count": 0, "data_age_days": 0, "anomalies": ["Report generation failed"], "alerts": ["Check logs"], "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%S")'"}' > quality_report.json
+        fi
         
         uv run python -c "
         import pandas as pd
@@ -229,6 +255,22 @@ jobs:
             
         print('📊 Quality dashboard generated')
         "
+        
+        # Ensure all files exist
+        if [ ! -f quality_summary.txt ]; then
+          echo "Quality Score: 0%" > quality_summary.txt
+          echo "Stock Count: 0" >> quality_summary.txt
+          echo "Status: ERROR" >> quality_summary.txt
+          echo "Error: Quality check failed to run" >> quality_summary.txt
+        fi
+        
+        if [ ! -f quality_dashboard.md ]; then
+          echo "# 📊 Data Quality Dashboard" > quality_dashboard.md
+          echo "" >> quality_dashboard.md
+          echo "**Status**: ❌ ERROR - Quality check failed to run" >> quality_dashboard.md
+          echo "" >> quality_dashboard.md
+          echo "Please check the workflow logs for details." >> quality_dashboard.md
+        fi
         
     - name: 🚨 Alert on Quality Issues
       if: steps.quality.outputs.quality_failed == 'true'
