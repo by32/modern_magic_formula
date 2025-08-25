@@ -34,7 +34,8 @@ jobs:
         
     - name: 🔧 Install Dependencies
       run: |
-        uv sync  # Install all dependencies
+        # Clean install to avoid binary incompatibility issues
+        uv sync --reinstall
         
     - name: 🔍 Run Data Quality Checks
       id: quality

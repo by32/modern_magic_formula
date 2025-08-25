@@ -38,7 +38,7 @@ jobs:
         
     - name: 🔧 Install Dependencies
       run: |
-        uv sync
+        uv sync --reinstall  # Clean install to avoid binary incompatibility
         
     - name: 🔍 Verify Environment
       run: |

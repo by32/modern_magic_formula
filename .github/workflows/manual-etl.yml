@@ -49,7 +49,8 @@ jobs:
         
     - name: 🔧 Install Dependencies
       run: |
-        uv sync
+        # Clean install to avoid binary incompatibility issues
+        uv sync --reinstall
         
     - name: 📊 Configure ETL Mode
       id: config
