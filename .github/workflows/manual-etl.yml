@@ -192,6 +192,10 @@ jobs:
         import pandas as pd
         from datetime import datetime
         
+        # Get mode and reason from GitHub inputs
+        mode = '${{ github.event.inputs.mode }}'
+        reason = '${{ github.event.inputs.reason }}'
+        
         data = pd.read_csv('data/latest_screening_hybrid.csv')
         
         report = f'''# 🔧 Manual ETL Update Report
