@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 
 // Cache data for 5 minutes
-let metadataCache: { data: any, timestamp: number } | null = null;
+interface MetadataCache {
+  data: unknown;
+  timestamp: number;
+}
+
+let metadataCache: MetadataCache | null = null;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 async function fetchMetadataFromGitHub() {

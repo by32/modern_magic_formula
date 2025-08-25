@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
     const minMarketCap = parseFloat(searchParams.get('min_market_cap') || '1000000000');
 
     // Apply DIY filters
-    let filteredData = stockData.filter((stock: StockData) => 
+    const filteredData = stockData.filter((stock: StockData) => 
       stock.f_score >= minFScore &&
       stock.market_cap >= minMarketCap &&
       stock.earnings_yield > 0 &&
@@ -137,7 +137,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error in stocks API:', error);
     return NextResponse.json(
-      { error: 'Failed to load stock data', details: error.message },
+      { 
+        error: 'Failed to load stock data', 
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

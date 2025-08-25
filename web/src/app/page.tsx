@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 
 interface StockData {
@@ -34,11 +34,7 @@ export default function HomePage() {
     min_market_cap: 1000000000
   });
 
-  useEffect(() => {
-    loadData();
-  }, [filters]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [stocksRes, qualityRes] = await Promise.all([
@@ -60,7 +56,11 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const formatMarketCap = (value: number) => {
     if (value >= 1e12) return `$${(value / 1e12).toFixed(1)}T`;
@@ -101,7 +101,7 @@ export default function HomePage() {
             DIY Stock Picks for Individual Investors
           </p>
           <p className="text-sm text-gray-500">
-            Based on Joel Greenblatt's proven value investing strategy
+            Based on Joel Greenblatt&apos;s proven value investing strategy
           </p>
         </div>
 
