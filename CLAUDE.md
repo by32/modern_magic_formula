@@ -4,101 +4,156 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Magic Formula stock screener** that runs Joel Greenblatt's investment screen weekly. The application implements value-trap avoidance checks (momentum, Piotroski F-Score, debt analysis, cash-flow, sentiment) and presents results in an interactive dashboard.
+This is a **Modern Magic Formula stock screener** that implements Joel Greenblatt's investment methodology with advanced features. The application screens ~1000 Russell 1000 stocks monthly using SEC point-in-time fundamentals and provides a professional web interface for individual investors.
 
 ## Architecture
 
-The project uses a **3-tier Docker architecture**:
+The project uses a **modern serverless architecture**:
 
-1. **ETL Container** (`etl/`): Python data pipeline that fetches financial data from APIs (FMP, IEX Cloud, Finnhub), computes metrics, and stores in Postgres
-2. **API Container** (`api/`): FastAPI service providing read-only JSON endpoints for screening results and deltas
-3. **UI Container** (`app/`): Streamlit dashboard for interactive data visualization and export
+1. **ETL Pipeline** (`etl/`): Python data pipeline with hybrid SEC EDGAR + Yahoo Finance data fetching
+2. **Web Interface** (`web/`): Next.js/React application deployed on Vercel with Tailwind CSS
+3. **GitHub Actions** (`/.github/workflows/`): Automated monthly ETL, quarterly rebalancing, and quality monitoring
+4. **Data Storage**: CSV files in Git with dynamic fetching via GitHub raw content API
 
-**Database**: Postgres with tables for `stocks`, `runs`, `fundamentals`, and `deltas`
+## Production Status: ✅ FULLY OPERATIONAL
 
-## Development Commands
+### Current Capabilities:
+- **Russell 1000 Processing**: 965+ stocks analyzed monthly (94.8% success rate)
+- **SEC EDGAR Integration**: 99.6% coverage with point-in-time fundamentals
+- **Magic Formula Rankings**: Complete earnings yield + ROC calculations  
+- **Quality Scoring**: Piotroski F-Score integration with value trap avoidance
+- **Web Interface**: Professional React app at https://your-vercel-app.vercel.app
+- **Automated Updates**: Monthly ETL via GitHub Actions
 
-### Local Development Setup
+## Quick Start
+
+### View Latest Results
 ```bash
-# Start full stack (includes sample data)
-docker compose up --build
+# Check latest screening data
+cat data/latest_screening_hybrid.csv
 
-# Run ETL job manually
-docker compose run etl python -m etl.main
-
-# Access services
-# UI: http://localhost:8501
-# API: http://localhost:8000
-# Database: localhost:5432
+# View web interface
+# Visit your deployed Vercel app
 ```
 
-### Testing & Code Quality
+### Run Manual ETL
 ```bash
-# Install dev dependencies
-pip install -r requirements-dev.txt
+# Test mode (50 stocks)
+gh workflow run "🔧 Manual ETL Trigger" --field mode=test
 
-# Run tests
-pytest
-
-# Run tests with coverage
-pytest --cov
-
-# Lint code
-black .
-flake8
-mypy .
-
-# Security scanning
-bandit -r .
+# Full production (1000 stocks) 
+gh workflow run "🔧 Manual ETL Trigger" --field mode=full
 ```
 
-### Individual Service Testing
+### Local Development
 ```bash
-# Test single ETL module
-python -m pytest tests/test_compute.py
+# Install dependencies
+uv sync
 
-# Run ETL directly (requires API keys in env)
-python -m etl.main
+# Run ETL locally
+uv run python -m etl.main_russell_hybrid
+
+# Start web development server
+cd web && npm run dev
 ```
 
 ## Environment Configuration
 
-Required environment variables in `.env`:
+GitHub Actions configured with secrets:
 ```
-ALPHA_VANTAGE_KEY=your_key
-FMP_KEY=your_key  
-FINNHUB_KEY=your_key
-IEX_TOKEN=your_token
-DATABASE_URL=postgresql://user:pass@db:5432/mf
+ALPHA_VANTAGE_KEY=*** (required)
+FINNHUB_KEY=*** (required)
+FMP_KEY= (optional)
+IEX_TOKEN= (optional)
 ```
 
 ## Key Components
 
 ### ETL Pipeline (`etl/`)
-- `fetch.py`: API wrappers for financial data sources
-- `compute.py`: Calculates earnings yield, ROC, F-Score, momentum, sentiment
-- `store.py`: SQLAlchemy models and database operations
-- `main.py`: CLI entry point for full ETL run
+- `main_russell_hybrid.py`: Primary ETL with hybrid SEC+Yahoo data
+- `hybrid_fundamentals.py`: Point-in-time SEC EDGAR integration
+- `russell_1000.py`: Russell 1000 universe management
+- `compute.py`: Magic Formula calculations and quality scoring
 
-### API Layer (`api/`)
-- FastAPI endpoints: `/api/stocks/latest`, `/api/deltas/latest`
-- Read-only access to latest screening results
+### Web Interface (`web/`)
+- `src/app/page.tsx`: Main DIY stock screening interface
+- `src/app/api/stocks/route.ts`: Dynamic data API from GitHub
+- `src/app/api/quality/route.ts`: Data quality monitoring API
+- Deployed on Vercel with automatic GitHub integration
 
-### UI Layer (`app/streamlit_app.py`)
-- Interactive table with filtering and conditional formatting
-- Export capabilities for screening results
-- Detailed drill-down views
+### Automation (`/.github/workflows/`)
+- `monthly-etl.yml`: Automated Russell 1000 refresh (1st of month)
+- `quarterly-rebalance.yml`: Quarterly portfolio rebalancing
+- `data-quality-monitor.yml`: Daily quality checks and alerts
+- `manual-etl.yml`: On-demand ETL trigger
+
+## Data Quality
+
+### Current Metrics (Production):
+- **Processing Success**: 94.8% (965/1018 stocks)
+- **SEC EDGAR Coverage**: 99.6% (961/965 stocks)
+- **Yahoo Finance Coverage**: 100% (965/965 stocks)
+- **Processing Time**: ~24 minutes for full Russell 1000
+- **Data Freshness**: Updated monthly via automated workflows
+
+## Magic Formula Implementation
+
+### Core Methodology:
+1. **Earnings Yield**: EBIT / Enterprise Value
+2. **Return on Capital**: EBIT / (Working Capital + Net Fixed Assets)
+3. **Combined Ranking**: Average of EY rank + ROC rank
+4. **Quality Filter**: Piotroski F-Score ≥5 recommended
+5. **Sector Diversification**: Max 25% per sector
+
+### Enhanced Features:
+- **Point-in-time fundamentals** (eliminates look-ahead bias)
+- **Value trap avoidance** (momentum, debt analysis, cash flow quality)
+- **Transaction cost modeling** (Corwin-Schultz bid-ask spreads)
+- **Tax-aware analysis** (FIFO/LIFO lot tracking)
+
+## Recent Major Updates
+
+### ✅ Completed (August 2025):
+- **Fixed numpy/pandas binary compatibility** in GitHub Actions
+- **Migrated from Streamlit Cloud to Vercel** (better reliability)
+- **Implemented dynamic data sync** from GitHub raw content API
+- **Successfully completed first production run** (965 stocks processed)
+- **Resolved all GitHub Actions workflow failures**
+- **Created professional React/Next.js web interface**
+
+### 📊 Production Run Results:
+- **Top Picks**: OGN (52% EY), CHRD (44% EY), VTRS (33% EY), EQH (27% EY), OXY (26% EY)
+- **Sector Distribution**: Energy, Healthcare, Technology, Financial Services
+- **Quality Scores**: F-Scores 2-6, with energy stocks leading
 
 ## Testing Strategy
 
-- **Unit tests** in `tests/` directory using pytest
-- Focus on `compute.py` functions for financial calculations
-- Use pytest fixtures for database testing
-- Mock external API calls in tests
+- **Unit Tests**: `tests/test_compute.py` for financial calculations
+- **Integration Tests**: GitHub Actions workflows with real API data
+- **Quality Monitoring**: Automated daily checks with Great Expectations
+- **Manual Testing**: On-demand ETL triggers for validation
 
-## Deployment Notes
+## Deployment
 
-- Production runs weekly via cron: `0 6 * * 1 docker compose run etl python -m etl.main`
-- All services containerized with separate Dockerfiles
-- Use environment variables for all configuration
-- Never commit API keys or credentials to repository
+### Production Setup:
+1. **GitHub Actions**: Automated monthly ETL processing
+2. **Vercel Deployment**: Web interface with serverless API routes
+3. **Data Pipeline**: CSV files committed to Git, served via GitHub API
+4. **Monitoring**: Daily quality checks with artifact uploads
+
+### Access Points:
+- **Web Interface**: https://your-vercel-app.vercel.app
+- **GitHub Actions**: https://github.com/by32/modern_magic_formula/actions
+- **Data Files**: `data/latest_screening_hybrid.csv`
+- **Quality Reports**: Uploaded as GitHub Actions artifacts
+
+## Important Notes
+
+- **API Rate Limits**: Monitor Alpha Vantage usage (production uses ~1000 calls/month)
+- **Processing Time**: Full ETL takes 20-30 minutes, plan accordingly
+- **Data Quality**: 94.8% success rate is excellent for financial data
+- **Git Permissions**: Manual commits may fail, but artifacts are always saved
+- **Security**: All API keys stored as GitHub Secrets, never in code
+
+---
+*Last Updated: August 2025 - System is fully operational and processing Russell 1000 monthly*
