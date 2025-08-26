@@ -295,7 +295,7 @@ export default function HomePage() {
               <select
                 value={filters.limit}
                 onChange={(e) => setFilters({...filters, limit: parseInt(e.target.value)})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               >
                 <option value={15}>15 stocks</option>
                 <option value={20}>20 stocks</option>
@@ -311,7 +311,7 @@ export default function HomePage() {
               <select
                 value={filters.min_fscore}
                 onChange={(e) => setFilters({...filters, min_fscore: parseInt(e.target.value)})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               >
                 <option value={4}>4+ (Moderate)</option>
                 <option value={5}>5+ (Good)</option>
@@ -327,7 +327,7 @@ export default function HomePage() {
               <select
                 value={filters.min_market_cap}
                 onChange={(e) => setFilters({...filters, min_market_cap: parseFloat(e.target.value)})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               >
                 <option value={1000000000}>$1B+ (Large Cap)</option>
                 <option value={500000000}>$500M+ (Mid Cap)</option>
