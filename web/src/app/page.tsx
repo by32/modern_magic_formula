@@ -39,14 +39,15 @@ export default function HomePage() {
   const [filters, setFilters] = useState({
     limit: 20,
     min_fscore: 5,
-    min_market_cap: 1000000000
+    min_market_cap: 1000000000,
+    exclude_financials: true
   });
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [stocksRes, qualityRes] = await Promise.all([
-        fetch(`/api/stocks?limit=${filters.limit}&min_fscore=${filters.min_fscore}&min_market_cap=${filters.min_market_cap}`),
+        fetch(`/api/stocks?limit=${filters.limit}&min_fscore=${filters.min_fscore}&min_market_cap=${filters.min_market_cap}&exclude_financials=${filters.exclude_financials}`),
         fetch('/api/quality')
       ]);
 
@@ -266,6 +267,23 @@ export default function HomePage() {
                 <option value={100000000}>$100M+ (Small Cap)</option>
               </select>
             </div>
+          </div>
+          
+          <div className="mt-4 border-t pt-4">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={filters.exclude_financials}
+                onChange={(e) => setFilters({...filters, exclude_financials: e.target.checked})}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">
+                Exclude Financial & Utility stocks (like magicformulainvesting.com)
+              </span>
+            </label>
+            <p className="text-xs text-gray-500 mt-1">
+              The official Magic Formula site excludes these sectors due to unique accounting practices.
+            </p>
           </div>
         </div>
 

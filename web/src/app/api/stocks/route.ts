@@ -83,15 +83,24 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const minFScore = parseInt(searchParams.get('min_fscore') || '5');
     const minMarketCap = parseFloat(searchParams.get('min_market_cap') || '1000000000');
+    const excludeFinancials = searchParams.get('exclude_financials') === 'true';
 
     // Apply DIY filters
-    const filteredData = stockData.filter((stock: StockData) => 
+    let filteredData = stockData.filter((stock: StockData) => 
       stock.f_score >= minFScore &&
       stock.market_cap >= minMarketCap &&
       stock.earnings_yield > 0 &&
       stock.roc > 0 &&
       stock.magic_formula_rank <= 100 // Top 100 Magic Formula picks
     );
+
+    // Optionally exclude financial and utility stocks (like official Magic Formula site)
+    if (excludeFinancials) {
+      filteredData = filteredData.filter((stock: StockData) => 
+        stock.sector !== 'Financial Services' && 
+        stock.sector !== 'Utilities'
+      );
+    }
 
     // Sort by Magic Formula rank
     filteredData.sort((a, b) => a.magic_formula_rank - b.magic_formula_rank);
