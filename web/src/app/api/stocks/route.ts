@@ -132,11 +132,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       stocks: diversifiedPicks.slice(0, limit),
-      total: filteredData.length,
+      total: filteredData.length, // Number of stocks meeting your criteria
+      total_universe: stockData.length, // Total stocks in the universe (Russell 1000)
       filters: {
         min_fscore: minFScore,
         min_market_cap: minMarketCap,
-        limit
+        limit,
+        exclude_financials: excludeFinancials
       },
       sector_distribution: sectorCounts,
       data_source: 'github',

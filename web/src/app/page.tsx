@@ -36,6 +36,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [expandedStock, setExpandedStock] = useState<string | null>(null);
   const [totalStocksCount, setTotalStocksCount] = useState<number>(0);
+  const [totalUniverseCount, setTotalUniverseCount] = useState<number>(0);
   const [filters, setFilters] = useState({
     limit: 20,
     min_fscore: 5,
@@ -55,6 +56,7 @@ export default function HomePage() {
         const stocksData = await stocksRes.json();
         setStocks(stocksData.stocks || []);
         setTotalStocksCount(stocksData.total || 0);
+        setTotalUniverseCount(stocksData.total_universe || 0);
       }
 
       if (qualityRes.ok) {
@@ -210,7 +212,7 @@ export default function HomePage() {
                 </div>
                 <p className="text-gray-700 mt-1 text-sm">
                   Stocks are ranked on both metrics, then combined. The top-ranked stocks are both cheap AND high quality.
-                  You&apos;re seeing the top {filters.limit} out of {totalStocksCount || '~1000'} Russell 1000 stocks.
+                  You&apos;re seeing the top {filters.limit} out of {totalStocksCount} qualifying stocks from the {totalUniverseCount || '~1000'} Russell 1000 universe.
                 </p>
               </div>
             </div>
@@ -395,7 +397,7 @@ export default function HomePage() {
                             <div className="space-y-4">
                               <div className="flex items-center justify-between border-b pb-2">
                                 <h4 className="font-semibold text-gray-900">Detailed Financial Metrics for {stock.ticker}</h4>
-                                <span className="text-sm text-gray-500">Magic Formula Rank: #{stock.magic_formula_rank} of {totalStocksCount}</span>
+                                <span className="text-sm text-gray-500">Magic Formula Rank: #{stock.magic_formula_rank} of {totalUniverseCount}</span>
                               </div>
                               
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
