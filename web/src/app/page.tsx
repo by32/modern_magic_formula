@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock, ChevronDown, ChevronUp, Info, Calculator, Target, DollarSign, ExternalLink } from 'lucide-react';
+import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock, ChevronDown, ChevronUp, Info, Calculator, Target, DollarSign, ExternalLink, Download } from 'lucide-react';
 
 interface StockData {
   ticker: string;
@@ -82,6 +82,71 @@ export default function HomePage() {
   };
 
   const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+  const exportToCSV = () => {
+    if (stocks.length === 0) return;
+
+    const csvHeaders = [
+      'Rank',
+      'Ticker',
+      'Company Name',
+      'Sector', 
+      'Market Cap',
+      'Current Price',
+      'Earnings Yield',
+      'ROC',
+      'F-Score',
+      'Magic Formula Rank',
+      '6M Momentum',
+      'P/E Ratio',
+      'P/B Ratio',
+      'Revenue',
+      'Net Income',
+      'Operating Income'
+    ];
+
+    const csvData = stocks.map((stock, index) => [
+      index + 1, // Display rank
+      stock.ticker,
+      stock.company_name,
+      stock.sector,
+      stock.market_cap,
+      stock.current_price || 'N/A',
+      (stock.earnings_yield * 100).toFixed(1) + '%',
+      (stock.roc * 100).toFixed(1) + '%',
+      stock.f_score,
+      stock.magic_formula_rank,
+      stock.momentum_6m ? (stock.momentum_6m * 100).toFixed(1) + '%' : 'N/A',
+      stock.pe_ratio?.toFixed(1) || 'N/A',
+      stock.pb_ratio?.toFixed(1) || 'N/A',
+      stock.revenue || 'N/A',
+      stock.net_income || 'N/A',
+      stock.operating_income || 'N/A'
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => 
+        row.map(cell => {
+          // Escape cells that contain commas, quotes, or newlines
+          if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+            return `"${cell.replace(/"/g, '""')}"`;
+          }
+          return cell;
+        }).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `magic-formula-stocks-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const getQualityColor = (status: string) => {
     switch (status) {
@@ -291,13 +356,29 @@ export default function HomePage() {
 
         {/* Stock Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="font-semibold text-gray-900">
-              Your Magic Formula Stock Picks
-            </h3>
-            <p className="text-sm text-gray-600 mt-1">
-              Ranked by Magic Formula score • Updated daily
-            </p>
+          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-start">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Your Magic Formula Stock Picks
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Ranked by Magic Formula score • Updated daily
+              </p>
+              {stocks.length > 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Export includes all financial metrics, ratios, and rankings for portfolio tracking
+                </p>
+              )}
+            </div>
+            {stocks.length > 0 && (
+              <button
+                onClick={exportToCSV}
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export CSV
+              </button>
+            )}
           </div>
 
           {loading ? (
