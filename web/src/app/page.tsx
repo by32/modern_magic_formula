@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock, ChevronDown, ChevronUp, Info, Calculator, Target, DollarSign } from 'lucide-react';
+import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock, ChevronDown, ChevronUp, Info, Calculator, Target, DollarSign, ExternalLink } from 'lucide-react';
 
 interface StockData {
   ticker: string;
@@ -331,6 +331,9 @@ export default function HomePage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       F-Score
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Research
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -390,10 +393,22 @@ export default function HomePage() {
                             </div>
                           </div>
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <a
+                            href={`https://finance.yahoo.com/quote/${stock.ticker}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()} // Prevent row expansion when clicking link
+                            className="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors"
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            Yahoo
+                          </a>
+                        </td>
                       </tr>
                       {expandedStock === stock.ticker && (
                         <tr>
-                          <td colSpan={7} className="px-6 py-4 bg-gray-50">
+                          <td colSpan={8} className="px-6 py-4 bg-gray-50">
                             <div className="space-y-4">
                               <div className="flex items-center justify-between border-b pb-2">
                                 <h4 className="font-semibold text-gray-900">Detailed Financial Metrics for {stock.ticker}</h4>
@@ -457,6 +472,55 @@ export default function HomePage() {
                                     The combination of being both cheap and profitable gives it a strong Magic Formula score.
                                   </p>
                                 </div>
+                              </div>
+
+                              <div className="bg-gray-100 rounded p-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h5 className="font-medium text-gray-900">Research {stock.ticker} Further</h5>
+                                  <ExternalLink className="w-4 h-4 text-gray-500" />
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                  <a
+                                    href={`https://finance.yahoo.com/quote/${stock.ticker}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-md hover:bg-purple-200 transition-colors"
+                                  >
+                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    Yahoo Finance
+                                  </a>
+                                  <a
+                                    href={`https://www.morningstar.com/stocks/xnas/${stock.ticker}/quote`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors"
+                                  >
+                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    Morningstar
+                                  </a>
+                                  <a
+                                    href={`https://www.sec.gov/edgar/searchedgar/companysearch.html?q=${stock.ticker}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-md hover:bg-green-200 transition-colors"
+                                  >
+                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    SEC Filings
+                                  </a>
+                                  <a
+                                    href={`https://www.google.com/search?q=${encodeURIComponent(stock.company_name + ' investor relations')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+                                  >
+                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    Company IR
+                                  </a>
+                                </div>
+                                <p className="text-xs text-gray-600 mt-2">
+                                  <strong>Due diligence reminder:</strong> Always research companies thoroughly before investing. 
+                                  Check recent earnings, management changes, and industry trends.
+                                </p>
                               </div>
                             </div>
                           </td>
