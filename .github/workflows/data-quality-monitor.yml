@@ -13,6 +13,9 @@ on:
   
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   quality-monitor:
     runs-on: ubuntu-latest
