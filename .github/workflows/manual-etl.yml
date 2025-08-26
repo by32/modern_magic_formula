@@ -26,6 +26,9 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: write
+  
 jobs:
   manual-etl:
     runs-on: ubuntu-latest
