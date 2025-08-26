@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { TrendingUp, Shield, BarChart3, AlertCircle, CheckCircle, Clock, ChevronDown, ChevronUp, Info, Calculator, Target, DollarSign } from 'lucide-react';
 
 interface StockData {
   ticker: string;
@@ -14,6 +14,12 @@ interface StockData {
   magic_formula_rank: number;
   pe_ratio?: number;
   pb_ratio?: number;
+  revenue?: number;
+  net_income?: number;
+  operating_income?: number;
+  current_price?: number;
+  momentum_6m?: number;
+  debt_to_equity?: number;
 }
 
 interface QualityData {
@@ -28,6 +34,8 @@ export default function HomePage() {
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [quality, setQuality] = useState<QualityData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [expandedStock, setExpandedStock] = useState<string | null>(null);
+  const [totalStocksCount, setTotalStocksCount] = useState<number>(0);
   const [filters, setFilters] = useState({
     limit: 20,
     min_fscore: 5,
@@ -45,6 +53,7 @@ export default function HomePage() {
       if (stocksRes.ok) {
         const stocksData = await stocksRes.json();
         setStocks(stocksData.stocks || []);
+        setTotalStocksCount(stocksData.total || 0);
       }
 
       if (qualityRes.ok) {
@@ -117,7 +126,7 @@ export default function HomePage() {
                   <h3 className="font-semibold text-gray-900">Data Quality</h3>
                   <p className="text-sm text-gray-600">
                     Score: {(quality.quality_score * 100).toFixed(1)}% | 
-                    Updated: {quality.data_age_days} days ago | 
+                    Updated: {quality.last_updated ? new Date(quality.last_updated).toLocaleDateString() : 'N/A'} | 
                     {quality.total_stocks} stocks analyzed
                   </p>
                 </div>
@@ -162,6 +171,48 @@ export default function HomePage() {
             <p className="text-sm text-gray-600">
               Automatic sector balancing to reduce concentration risk
             </p>
+          </div>
+        </div>
+
+        {/* Magic Formula Explanation */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-8 border border-blue-200">
+          <div className="flex items-start space-x-3">
+            <Info className="w-6 h-6 text-blue-600 mt-1" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 mb-3 text-lg">How the Magic Formula Works</h3>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Calculator className="w-4 h-4 text-indigo-600" />
+                    <span className="font-medium text-gray-900">Step 1: Calculate Earnings Yield</span>
+                  </div>
+                  <p className="text-gray-700 ml-6">
+                    EBIT ÷ Enterprise Value = How much the business earns relative to its price.
+                    Higher is better (cheap + profitable).
+                  </p>
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Target className="w-4 h-4 text-indigo-600" />
+                    <span className="font-medium text-gray-900">Step 2: Calculate Return on Capital</span>
+                  </div>
+                  <p className="text-gray-700 ml-6">
+                    EBIT ÷ (Working Capital + Fixed Assets) = How efficiently the business generates profits.
+                    Higher means better management.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 p-3 bg-white rounded border border-blue-200">
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="w-4 h-4 text-green-600" />
+                  <span className="font-medium text-gray-900">Final Ranking</span>
+                </div>
+                <p className="text-gray-700 mt-1 text-sm">
+                  Stocks are ranked on both metrics, then combined. The top-ranked stocks are both cheap AND high quality.
+                  You&apos;re seeing the top {filters.limit} out of {totalStocksCount || '~1000'} Russell 1000 stocks.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -264,52 +315,134 @@ export default function HomePage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {stocks.map((stock, index) => (
-                    <tr key={stock.ticker} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
-                            {index + 1}
+                    <React.Fragment key={stock.ticker}>
+                      <tr 
+                        className="hover:bg-gray-50 cursor-pointer transition-colors"
+                        onClick={() => setExpandedStock(expandedStock === stock.ticker ? null : stock.ticker)}
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
+                              {index + 1}
+                            </div>
+                            <div className="ml-2">
+                              {expandedStock === stock.ticker ? 
+                                <ChevronUp className="w-4 h-4 text-gray-400" /> : 
+                                <ChevronDown className="w-4 h-4 text-gray-400" />
+                              }
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {stock.ticker}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {stock.ticker}
+                            </div>
+                            <div className="text-sm text-gray-500 truncate max-w-48">
+                              {stock.company_name}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-500 truncate max-w-48">
-                            {stock.company_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                            {stock.sector}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatMarketCap(stock.market_cap)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatPercent(stock.earnings_yield)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatPercent(stock.roc)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="text-sm font-medium text-gray-900">
+                              {stock.f_score}
+                            </div>
+                            <div className="ml-2 w-16 bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-green-600 h-2 rounded-full"
+                                style={{ width: `${(stock.f_score / 9) * 100}%` }}
+                              ></div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                          {stock.sector}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatMarketCap(stock.market_cap)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatPercent(stock.earnings_yield)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatPercent(stock.roc)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-900">
-                            {stock.f_score}
-                          </div>
-                          <div className="ml-2 w-16 bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-green-600 h-2 rounded-full"
-                              style={{ width: `${(stock.f_score / 9) * 100}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
+                      {expandedStock === stock.ticker && (
+                        <tr>
+                          <td colSpan={7} className="px-6 py-4 bg-gray-50">
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between border-b pb-2">
+                                <h4 className="font-semibold text-gray-900">Detailed Financial Metrics for {stock.ticker}</h4>
+                                <span className="text-sm text-gray-500">Magic Formula Rank: #{stock.magic_formula_rank} of {totalStocksCount}</span>
+                              </div>
+                              
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">Current Price</div>
+                                  <div className="text-lg font-medium text-gray-900">
+                                    ${stock.current_price?.toFixed(2) || 'N/A'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">6M Momentum</div>
+                                  <div className={`text-lg font-medium ${(stock.momentum_6m || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                    {stock.momentum_6m ? formatPercent(stock.momentum_6m) : 'N/A'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">P/E Ratio</div>
+                                  <div className="text-lg font-medium text-gray-900">
+                                    {stock.pe_ratio?.toFixed(1) || 'N/A'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">P/B Ratio</div>
+                                  <div className="text-lg font-medium text-gray-900">
+                                    {stock.pb_ratio?.toFixed(1) || 'N/A'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">Revenue</div>
+                                  <div className="text-lg font-medium text-gray-900">
+                                    {stock.revenue ? formatMarketCap(stock.revenue) : 'N/A'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">Operating Income</div>
+                                  <div className="text-lg font-medium text-gray-900">
+                                    {stock.operating_income ? formatMarketCap(stock.operating_income) : 'N/A'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 uppercase">Net Income</div>
+                                  <div className="text-lg font-medium text-gray-900">
+                                    {stock.net_income ? formatMarketCap(stock.net_income) : 'N/A'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="bg-blue-50 rounded p-3">
+                                <div className="text-sm text-blue-900">
+                                  <strong>Why this stock ranks #{stock.magic_formula_rank}:</strong>
+                                  <p className="mt-1">
+                                    This company has an earnings yield of {formatPercent(stock.earnings_yield)} (ranked in top tier for value) 
+                                    and a return on capital of {formatPercent(stock.roc)} (efficiency rank). 
+                                    The combination of being both cheap and profitable gives it a strong Magic Formula score.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
