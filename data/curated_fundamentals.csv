@@ -1,0 +1,7 @@
+ticker,company_name,sector,ebit,enterprise_value,market_cap,f_score,cash_flow_quality_score,sentiment_score,momentum_6m,debt_to_equity,ocf_margin,fcf_margin,ocf_to_ni_ratio
+AAPL,Apple Inc.,Technology,123500000000,2800000000000,2900000000000,8,4,3,0.15,0.3,0.28,0.24,1.2
+MSFT,Microsoft Corporation,Technology,89400000000,2200000000000,2300000000000,7,5,3,0.08,0.2,0.35,0.32,1.4
+GOOGL,Alphabet Inc.,Technology,76000000000,1600000000000,1650000000000,6,3,2,-0.05,0.1,0.22,0.18,1.1
+BRK.B,Berkshire Hathaway Inc.,Financials,35000000000,700000000000,750000000000,8,4,3,0.12,0.2,0.15,0.12,1.3
+V,Visa Inc.,Financials,18500000000,450000000000,475000000000,9,5,3,0.22,0.4,0.45,0.42,1.5
+JNJ,Johnson & Johnson,Healthcare,25000000000,400000000000,420000000000,7,4,2,0.03,0.5,0.18,0.15,1.2
