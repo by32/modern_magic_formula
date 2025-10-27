@@ -122,20 +122,14 @@ def test_diy_interface():
     # Test 5: Data quality check
     print("\n🔍 Test 5: Data Quality Check")
     try:
-        from data_quality.monitoring import DataQualityMonitor
-        monitor = DataQualityMonitor()
-        quality_results = monitor.run_monitoring_check('data/latest_screening_hybrid.csv')
-        quality_score = quality_results.get('overall_score', 0)
-        
-        print(f"   ✅ Data quality score: {quality_score:.1%}")
-        
-        if quality_score >= 0.80:
-            print(f"   ✅ Quality threshold met")
-        else:
-            print(f"   ⚠️  Quality below threshold (80%)")
-            
+        from data_quality.monitoring import run_data_quality_checks
+
+        run_data_quality_checks('data/latest_screening_hybrid.csv')
+        print(f"   ✅ Data quality checks passed")
+
     except Exception as e:
-        print(f"   ⚠️  Quality check unavailable: {e}")
+        print(f"   ❌ Data quality check failed: {e}")
+        return False
     
     print(f"\n✅ All DIY interface tests completed successfully!")
     print(f"🚀 Streamlit app ready for individual investors")
