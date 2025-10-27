@@ -49,5 +49,9 @@ logs/
 data/cache/
 *.csv
 *.json
+!data/curated_fundamentals.csv
+!data/latest_screening.csv
+!data/latest_screening.json
+!data/metadata.json
 !package*.json
 !pyproject.toml
