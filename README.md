@@ -223,22 +223,10 @@ print(f"Tax Efficiency: {results['tax_efficiency']*100:.1f}%")
 
 ### Data Quality Monitoring
 ```python
-from data_quality.monitoring import DataQualityMonitor
-from data_quality.etl_integration import QualityAwareETLPipeline
+from data_quality.monitoring import run_data_quality_checks
 
-# Initialize quality monitoring
-monitor = DataQualityMonitor()
-
-# Run comprehensive quality check
-results = monitor.run_monitoring_check('data/latest_screening_hybrid.csv')
-
-print(f"Overall Quality Score: {results['overall_score']:.2%}")
-print(f"Anomalies Detected: {len(results['anomalies'])}")
-print(f"Quality Trend: {results['trend_analysis']['trend']}")
-
-# Generate quality dashboard
-dashboard = monitor.generate_quality_dashboard()
-print(dashboard)
+# Ensure the regenerated dataset looks sane
+run_data_quality_checks('data/latest_screening.csv')
 ```
 
 ### Strategy Comparison Analysis

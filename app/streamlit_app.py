@@ -75,12 +75,12 @@ def load_screening_data():
 def get_data_quality_score():
     """Get current data quality score"""
     try:
-        from data_quality.monitoring import DataQualityMonitor
-        monitor = DataQualityMonitor()
-        results = monitor.run_monitoring_check('data/latest_screening_hybrid.csv')
-        return results.get('overall_score', 0)
-    except Exception as e:
-        return 0.75  # Fallback score
+        from data_quality.monitoring import run_data_quality_checks
+
+        run_data_quality_checks('data/latest_screening_hybrid.csv')
+        return 1.0
+    except Exception:
+        return 0.0  # Fallback score when checks cannot run
 
 def apply_diy_filters(data, min_fscore=5, min_market_cap=1e9):
     """Apply DIY-appropriate filters"""

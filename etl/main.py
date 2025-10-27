@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
+from data_quality.monitoring import run_data_quality_checks
 from etl.local_pipeline import refresh_from_curated
 
 
@@ -17,6 +18,9 @@ def run(*, curated_path: Optional[Path] = None, output_dir: Optional[Path] = Non
     print(f"✅ Refreshed sample dataset with {len(screening_df)} rows.")
     print(f"   Source: {metadata['data_source']}")
     print(f"   Last run: {metadata['run_date']}")
+
+    target_dir = Path(output_dir) if output_dir else Path("data")
+    run_data_quality_checks(target_dir / "latest_screening.csv")
 
 
 if __name__ == "__main__":
