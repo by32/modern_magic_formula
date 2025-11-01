@@ -8,18 +8,20 @@ This module provides:
 3. Seamless integration with existing ETL pipeline
 """
 
-import requests
-import pandas as pd
+import json
+import os
+import sys
 import time
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Dict, Optional, List, Tuple
-import json
+
+import pandas as pd
+import requests
 import yfinance as yf
-import sys
-import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from etl.fetch import get_yahoo_finance_fundamentals, get_6_month_price_data
 
 class HybridFundamentals:
     """Hybrid data fetcher combining SEC fundamentals with Yahoo market data"""
@@ -27,7 +29,7 @@ class HybridFundamentals:
     def __init__(self, as_of_date: Optional[datetime] = None):
         """
         Initialize hybrid fundamentals fetcher
-        
+
         Args:
             as_of_date: Point-in-time date for SEC data. If None, uses current date.
         """
@@ -39,6 +41,61 @@ class HybridFundamentals:
         }
         self.rate_limit_delay = 0.1  # SEC allows 10 requests per second
         self.ticker_to_cik_cache = {}
+        self.offline_mode = False
+        self.cached_results = self._load_cached_results()
+        self.cached_lookup = {
+            row.get('ticker'): row for row in self.cached_results if row.get('ticker')
+        }
+        self.used_cached_results = False
+
+    def _load_cached_results(self) -> List[Dict]:
+        """Load the most recent screening output as an offline fallback."""
+
+        fallback_path = Path(__file__).resolve().parent.parent / "data" / "latest_screening_hybrid.csv"
+        if not fallback_path.exists():
+            return []
+
+        try:
+            df = pd.read_csv(fallback_path)
+            records: List[Dict] = df.to_dict(orient="records")
+            return records
+        except Exception as exc:  # pragma: no cover - defensive guardrail
+            print(f"⚠️  Unable to load cached screening dataset: {exc}")
+            return []
+
+    def has_cached_results(self) -> bool:
+        """Return True if a cached screening dataset is available."""
+
+        return bool(self.cached_results)
+
+    def get_cached_screening_results(self) -> List[Dict]:
+        """Return a copy of the cached screening output."""
+
+        if not self.cached_results:
+            print("⚠️  No cached screening dataset available for fallback.")
+            return []
+
+        self.used_cached_results = True
+        # Return shallow copies so downstream mutations do not affect cache
+        return [dict(row) for row in self.cached_results]
+
+    def _get_cached_hybrid(self, ticker: str) -> Optional[Dict]:
+        """Return cached hybrid fundamentals for a ticker if available."""
+
+        cached_row = self.cached_lookup.get(ticker)
+        if not cached_row:
+            return None
+
+        data = dict(cached_row)
+        data.setdefault('_data_sources', {})
+        data['_data_sources'].update({
+            'sec_available': False,
+            'yahoo_available': False,
+            'market_data_available': False,
+            'as_of_date': self.as_of_date.isoformat(),
+            'sec_filing_dates': {}
+        })
+        return data
         
     def get_ticker_to_cik_mapping(self) -> Dict[str, str]:
         """Get ticker to CIK mapping from SEC (cached)"""
@@ -57,54 +114,61 @@ class HybridFundamentals:
             
             if response.status_code == 200:
                 data = response.json()
-                
+
                 # Convert to ticker -> CIK mapping
                 for key, company_info in data.items():
                     ticker = company_info.get('ticker', '').upper()
                     cik = f"{company_info.get('cik_str', 0):010d}"  # Pad to 10 digits
-                    
+
                     if ticker and cik != '0000000000':
                         self.ticker_to_cik_cache[ticker] = cik
-                        
+
                 return self.ticker_to_cik_cache
-                
-            else:
-                print(f"⚠️  Failed to get ticker mappings: {response.status_code}")
-                return {}
-                
+
+            print(f"⚠️  Failed to get ticker mappings: {response.status_code}")
+            self.offline_mode = True
+            return {}
+
         except Exception as e:
             print(f"⚠️  Error getting ticker mappings: {e}")
+            self.offline_mode = True
             return {}
     
     def get_sec_fundamentals(self, ticker: str) -> Optional[Dict]:
         """
         Get point-in-time fundamentals from SEC EDGAR API
-        
+
         Args:
             ticker: Stock ticker symbol
-            
+
         Returns:
             Dict with SEC fundamental data or None if not available
         """
+        if self.offline_mode:
+            return None
+
         # Get CIK for ticker
         ticker_mapping = self.get_ticker_to_cik_mapping()
         cik = ticker_mapping.get(ticker.upper())
-        
+
         if not cik:
             return None
-            
+
         try:
             time.sleep(self.rate_limit_delay)
             url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
             response = requests.get(url, headers=self.headers, timeout=30)
-            
+
             if response.status_code == 200:
                 company_facts = response.json()
                 return self._extract_sec_metrics(company_facts)
-            else:
-                return None
-                
-        except Exception as e:
+
+            if response.status_code in {403, 429, 500}:
+                self.offline_mode = True
+            return None
+
+        except Exception:
+            self.offline_mode = True
             return None
     
     def _extract_sec_metrics(self, company_facts: Dict) -> Dict:
@@ -205,28 +269,53 @@ class HybridFundamentals:
     
     def get_yahoo_market_data(self, ticker: str) -> Optional[Dict]:
         """Get current market data from Yahoo Finance"""
-        
+
+        if self.offline_mode:
+            return None
+
         try:
-            # Get current market data
             stock = yf.Ticker(ticker)
-            info = stock.info
-            
-            # Get 6-month price data for momentum analysis
-            price_data = get_6_month_price_data(ticker)
-            
+            info = getattr(stock, "fast_info", None) or {}
+
+            # Fallback to .info only if fast_info is unavailable to limit API calls
+            if not info:
+                info = stock.info or {}
+
             market_data = {
-                'market_cap': info.get('marketCap', 0),
-                'current_price': info.get('currentPrice', info.get('regularMarketPrice', 0)),
-                'shares_outstanding': info.get('sharesOutstanding', 0),
-                'price_data': price_data,
+                'market_cap': info.get('market_cap') or info.get('marketCap', 0),
+                'current_price': info.get('last_price')
+                or info.get('currentPrice')
+                or info.get('regularMarketPrice', 0),
+                'shares_outstanding': info.get('shares_outstanding')
+                or info.get('sharesOutstanding', 0),
                 'sector': info.get('sector', 'Unknown'),
                 'industry': info.get('industry', 'Unknown'),
                 'company_name': info.get('longName', info.get('shortName', ticker))
             }
-            
+
+            # Best effort attempt at momentum using local price history
+            try:
+                history = stock.history(period="6mo")
+                if not history.empty:
+                    start_price = float(history["Close"].iloc[0])
+                    end_price = float(history["Close"].iloc[-1])
+                    if start_price > 0:
+                        momentum = (end_price - start_price) / start_price
+                    else:
+                        momentum = None
+                    market_data['price_data'] = {
+                        'momentum_6m': momentum,
+                        'price_vs_52w_high': 0,
+                        'current_price': market_data['current_price'],
+                    }
+            except Exception:
+                # Ignore price history issues – treated as unavailable in offline mode
+                pass
+
             return market_data
-            
-        except Exception as e:
+
+        except Exception:
+            self.offline_mode = True
             return None
     
     def get_hybrid_fundamentals(self, ticker: str) -> Optional[Dict]:
@@ -240,20 +329,27 @@ class HybridFundamentals:
             Dict with combined fundamental data in format compatible with existing pipeline
         """
         
+        # Offline fallback – reuse cached screening result if available
+        if self.offline_mode and self.has_cached_results():
+            cached_data = self._get_cached_hybrid(ticker)
+            if cached_data:
+                return cached_data
+
         # Get SEC point-in-time fundamentals
         sec_data = self.get_sec_fundamentals(ticker)
-        
+
+        if self.offline_mode and self.has_cached_results():
+            cached_data = self._get_cached_hybrid(ticker)
+            if cached_data:
+                return cached_data
+
         # Get Yahoo market data
-        yahoo_data = get_yahoo_finance_fundamentals(ticker)
         market_data = self.get_yahoo_market_data(ticker)
-        
-        # If we have no data sources, return None
-        if not sec_data and not yahoo_data:
-            return None
-        
+        yahoo_data: Dict = {}
+
         # Create hybrid data structure compatible with existing pipeline
         hybrid_data = {}
-        
+
         # Helper function to safely get values
         def get_sec_value(key: str, default=0) -> float:
             item = sec_data.get(key) if sec_data else None
@@ -281,7 +377,7 @@ class HybridFundamentals:
             # Core identifiers
             'Name': get_market_value('company_name', ticker),
             'Sector': get_market_value('sector', 'Unknown'),
-            
+
             # Market data (from Yahoo - current)
             'MarketCapitalization': get_market_value('market_cap', get_yahoo_value('MarketCapitalization')),
             'SharesOutstanding': get_market_value('shares_outstanding', get_yahoo_value('SharesOutstanding')),
@@ -365,28 +461,41 @@ class HybridFundamentals:
         print(f"📅 Using point-in-time date: {self.as_of_date.date()}")
         
         for i, ticker in enumerate(tickers):
+            if self.offline_mode:
+                break
+
             if i % 25 == 0:  # Progress every 25 tickers
                 print(f"   Progress: {i}/{len(tickers)} processed...")
-            
+
             try:
                 fundamentals = self.get_hybrid_fundamentals(ticker)
                 if fundamentals:
                     results[ticker] = fundamentals
-                    
+
             except Exception as e:
                 print(f"⚠️  Error processing {ticker}: {e}")
                 continue
-        
+
+        if self.offline_mode and not results:
+            print("📴 Offline mode detected during hybrid fetch – skipping remote lookups.")
+
         print(f"✅ Successfully processed {len(results)}/{len(tickers)} tickers")
-        
+
         # Display data source statistics
-        sec_count = sum(1 for data in results.values() if data.get('_data_sources', {}).get('sec_available', False))
-        yahoo_count = sum(1 for data in results.values() if data.get('_data_sources', {}).get('yahoo_available', False))
-        
-        print(f"📊 Data sources used:")
-        print(f"   🏛️  SEC EDGAR: {sec_count}/{len(results)} tickers ({sec_count/len(results)*100:.1f}%)")
-        print(f"   🌐 Yahoo Finance: {yahoo_count}/{len(results)} tickers ({yahoo_count/len(results)*100:.1f}%)")
-        
+        sec_count = sum(
+            1 for data in results.values()
+            if data.get('_data_sources', {}).get('sec_available', False)
+        )
+        yahoo_count = sum(
+            1 for data in results.values()
+            if data.get('_data_sources', {}).get('yahoo_available', False)
+        )
+
+        print("📊 Data sources used:")
+        total = len(results) or 1
+        print(f"   🏛️  SEC EDGAR: {sec_count}/{len(results)} tickers ({sec_count/total*100:.1f}%)")
+        print(f"   🌐 Yahoo Finance: {yahoo_count}/{len(results)} tickers ({yahoo_count/total*100:.1f}%)")
+
         return results
 
 def test_hybrid_fundamentals():

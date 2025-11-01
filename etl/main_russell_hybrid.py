@@ -8,10 +8,9 @@ This module uses a hybrid approach combining:
 """
 import logging, os, pandas as pd, json, time
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from etl.russell_1000 import get_cached_russell_1000
 from etl.hybrid_fundamentals import HybridFundamentals
-from etl.fetch import get_6_month_price_data
 from etl.compute import (
     compute_piotroski_fscore, compute_debt_to_equity, compute_momentum_6m, 
     compute_price_strength_score, compute_cash_flow_quality_score, 
@@ -166,7 +165,7 @@ def process_single_stock_hybrid(ticker: str, hybrid_data: Dict, stock_info: Dict
         print(f"❌ Error processing {ticker}: {e}")
         return None
 
-def process_stocks_hybrid(stocks: List[Dict], as_of_date: Optional[datetime] = None) -> List[Dict]:
+def process_stocks_hybrid(stocks: List[Dict], as_of_date: Optional[datetime] = None) -> Tuple[List[Dict], HybridFundamentals]:
     """
     Process Russell 1000 stocks using hybrid approach.
     
@@ -175,7 +174,7 @@ def process_stocks_hybrid(stocks: List[Dict], as_of_date: Optional[datetime] = N
         as_of_date: Point-in-time date for SEC data (None = current date)
         
     Returns:
-        List of processed stock data with enhanced financial metrics
+        Tuple of (processed stock data, fetcher instance)
     """
     
     # Use current date if not specified, but for backtesting could be historical
@@ -193,7 +192,11 @@ def process_stocks_hybrid(stocks: List[Dict], as_of_date: Optional[datetime] = N
     # Get hybrid fundamental data for all tickers
     print(f"📊 Fetching hybrid fundamentals...")
     hybrid_data_batch = fetcher.get_batch_fundamentals(tickers)
-    
+
+    if fetcher.offline_mode and fetcher.has_cached_results():
+        print("📴 Offline mode detected – using cached screening results.")
+        return fetcher.get_cached_screening_results(), fetcher
+
     # Process each stock
     results = []
     successful_count = 0
@@ -214,7 +217,7 @@ def process_stocks_hybrid(stocks: List[Dict], as_of_date: Optional[datetime] = N
             print(f"⚠️  No hybrid data available for {ticker}")
     
     print(f"✅ Successfully processed {successful_count}/{len(stocks)} stocks")
-    return results
+    return results, fetcher
 
 def run_russell_1000_hybrid_screening(as_of_date: Optional[datetime] = None):
     """
@@ -244,8 +247,8 @@ def run_russell_1000_hybrid_screening(as_of_date: Optional[datetime] = None):
         russell_stocks = russell_stocks[:50]
     
     # Step 2: Process stocks with hybrid approach
-    processed_stocks = process_stocks_hybrid(russell_stocks, as_of_date=analysis_date)
-    
+    processed_stocks, fetcher = process_stocks_hybrid(russell_stocks, as_of_date=analysis_date)
+
     if not processed_stocks:
         print("❌ No stocks were successfully processed.")
         return
@@ -283,6 +286,8 @@ def run_russell_1000_hybrid_screening(as_of_date: Optional[datetime] = None):
     sec_coverage = df['sec_data_available'].sum()
     yahoo_coverage = df['yahoo_data_available'].sum()
     
+    fallback_used = getattr(fetcher, 'used_cached_results', False)
+
     metadata = {
         "run_date": end_time.isoformat(),
         "analysis_date": analysis_date.isoformat(),
@@ -303,6 +308,17 @@ def run_russell_1000_hybrid_screening(as_of_date: Optional[datetime] = None):
             "value_trap_avoidance": True
         },
         "version": "2.1-hybrid-pit"
+    }
+
+    if fallback_used:
+        metadata["fallback"] = {
+            "used_cached_dataset": True,
+            "source": "data/latest_screening_hybrid.csv",
+            "reason": "offline_mode"
+        }
+
+    metadata["environment"] = {
+        "offline_mode": getattr(fetcher, 'offline_mode', False)
     }
     
     with open('data/metadata_hybrid.json', 'w') as f:
