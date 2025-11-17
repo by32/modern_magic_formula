@@ -1,10 +1,10 @@
 {
-  "run_date": "2025-11-10T06:46:57.575889",
-  "analysis_date": "2025-11-10T06:38:22.380256",
+  "run_date": "2025-11-17T06:50:44.721263",
+  "analysis_date": "2025-11-17T06:37:50.680048",
   "total_stocks": 960,
   "russell_1000_stocks": 1018,
   "successful_fetches": 960,
-  "processing_time_seconds": 515.195636,
+  "processing_time_seconds": 774.041218,
   "data_sources": {
     "sec_edgar_coverage": "956/960 (99.6%)",
     "yahoo_finance_coverage": "959/960 (99.9%)",
