@@ -70,10 +70,14 @@ IEX_TOKEN= (optional)
 ## Key Components
 
 ### ETL Pipeline (`etl/`)
-- `main_russell_hybrid.py`: Primary ETL with hybrid SEC+Yahoo data
+- `main_russell_hybrid.py`: Primary ETL orchestrator with hybrid SEC+Yahoo data
 - `hybrid_fundamentals.py`: Point-in-time SEC EDGAR integration
+- `compute.py`: Magic Formula calculations, F-Score, and quality scoring
+- `fetch.py`: API data fetching (Alpha Vantage, Yahoo Finance)
 - `russell_1000.py`: Russell 1000 universe management
-- `compute.py`: Magic Formula calculations and quality scoring
+- `sec_direct_fundamentals.py`: Direct SEC XBRL API access
+- `transaction_costs.py`: Bid-ask spread modeling
+- `realistic_costs.py`: Advanced transaction cost modeling
 
 ### Web Interface (`web/`)
 - `src/app/page.tsx`: Main DIY stock screening interface
@@ -112,6 +116,11 @@ IEX_TOKEN= (optional)
 - **Tax-aware analysis** (FIFO/LIFO lot tracking)
 
 ## Recent Major Updates
+
+### ✅ Completed (December 2025):
+- **Security fix**: Patched critical RCE vulnerability (CVE-2025-55182) - Next.js upgraded to 15.4.8
+- **ETL cleanup**: Removed 5 legacy files (~1,100 lines), keeping full investment toolkit
+- **Codebase simplification**: Reduced from 14 to 8 ETL modules
 
 ### ✅ Completed (August 2025):
 - **Fixed numpy/pandas binary compatibility** in GitHub Actions
@@ -156,4 +165,4 @@ IEX_TOKEN= (optional)
 - **Security**: All API keys stored as GitHub Secrets, never in code
 
 ---
-*Last Updated: August 2025 - System is fully operational and processing Russell 1000 monthly*
+*Last Updated: December 2025 - System is fully operational and processing Russell 1000 monthly*
