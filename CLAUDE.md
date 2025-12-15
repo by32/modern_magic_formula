@@ -22,7 +22,7 @@ The project uses a **modern serverless architecture**:
 - **SEC EDGAR Integration**: 99.6% coverage with point-in-time fundamentals
 - **Magic Formula Rankings**: Complete earnings yield + ROC calculations  
 - **Quality Scoring**: Piotroski F-Score integration with value trap avoidance
-- **Web Interface**: Professional React app at https://your-vercel-app.vercel.app
+- **Web Interface**: Professional React app at https://modernmagicformula.vercel.app
 - **Automated Updates**: Monthly ETL via GitHub Actions
 
 ## Quick Start
@@ -151,7 +151,7 @@ IEX_TOKEN= (optional)
 4. **Monitoring**: Daily quality checks with artifact uploads
 
 ### Access Points:
-- **Web Interface**: https://your-vercel-app.vercel.app
+- **Web Interface**: https://modernmagicformula.vercel.app
 - **GitHub Actions**: https://github.com/by32/modern_magic_formula/actions
 - **Data Files**: `data/latest_screening_hybrid.csv`
 - **Quality Reports**: Uploaded as GitHub Actions artifacts
