@@ -1,13 +1,13 @@
 {
-  "run_date": "2025-12-15T06:51:30.848178",
-  "analysis_date": "2025-12-15T06:42:41.143853",
-  "total_stocks": 960,
+  "run_date": "2025-12-15T16:00:55.022150",
+  "analysis_date": "2025-12-15T15:44:48.880472",
+  "total_stocks": 793,
   "russell_1000_stocks": 1018,
-  "successful_fetches": 960,
-  "processing_time_seconds": 529.704328,
+  "successful_fetches": 793,
+  "processing_time_seconds": 966.141682,
   "data_sources": {
-    "sec_edgar_coverage": "956/960 (99.6%)",
-    "yahoo_finance_coverage": "959/960 (99.9%)",
+    "sec_edgar_coverage": "793/793 (100.0%)",
+    "yahoo_finance_coverage": "793/793 (100.0%)",
     "hybrid_approach": true,
     "point_in_time_accuracy": true
   },
@@ -18,12 +18,7 @@
     "value_trap_avoidance": true
   },
   "version": "2.1-hybrid-pit",
-  "fallback": {
-    "used_cached_dataset": true,
-    "source": "data/latest_screening_hybrid.csv",
-    "reason": "offline_mode"
-  },
   "environment": {
-    "offline_mode": true
+    "offline_mode": false
   }
 }
