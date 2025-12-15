@@ -12,18 +12,18 @@ The project uses a **modern serverless architecture**:
 
 1. **ETL Pipeline** (`etl/`): Python data pipeline with hybrid SEC EDGAR + Yahoo Finance data fetching
 2. **Web Interface** (`web/`): Next.js/React application deployed on Vercel with Tailwind CSS
-3. **GitHub Actions** (`/.github/workflows/`): Automated monthly ETL, quarterly rebalancing, and quality monitoring
+3. **GitHub Actions** (`/.github/workflows/`): Automated weekly ETL, quarterly rebalancing, and quality monitoring
 4. **Data Storage**: CSV files in Git with dynamic fetching via GitHub raw content API
 
 ## Production Status: ✅ FULLY OPERATIONAL
 
 ### Current Capabilities:
-- **Russell 1000 Processing**: 965+ stocks analyzed monthly (94.8% success rate)
+- **Russell 1000 Processing**: 965+ stocks analyzed weekly (94.8% success rate)
 - **SEC EDGAR Integration**: 99.6% coverage with point-in-time fundamentals
 - **Magic Formula Rankings**: Complete earnings yield + ROC calculations  
 - **Quality Scoring**: Piotroski F-Score integration with value trap avoidance
 - **Web Interface**: Professional React app at https://modernmagicformula.vercel.app
-- **Automated Updates**: Monthly ETL via GitHub Actions
+- **Automated Updates**: Weekly ETL via GitHub Actions (every Monday)
 
 ## Quick Start
 
@@ -86,7 +86,7 @@ IEX_TOKEN= (optional)
 - Deployed on Vercel with automatic GitHub integration
 
 ### Automation (`/.github/workflows/`)
-- `monthly-etl.yml`: Automated Russell 1000 refresh (1st of month)
+- `update-screening.yml`: Weekly Russell 1000 refresh (every Monday 6 AM UTC)
 - `quarterly-rebalance.yml`: Quarterly portfolio rebalancing
 - `data-quality-monitor.yml`: Daily quality checks and alerts
 - `manual-etl.yml`: On-demand ETL trigger

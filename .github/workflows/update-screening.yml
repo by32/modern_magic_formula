@@ -37,22 +37,16 @@ jobs:
         FMP_KEY: ${{ secrets.FMP_KEY }}
         FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
         IEX_TOKEN: ${{ secrets.IEX_TOKEN }}
+      timeout-minutes: 45
       run: |
-        # Try to run ETL with real API data, fallback to sample data if it fails
-        if [ -z "$ALPHA_VANTAGE_KEY" ]; then
-          echo "⚠️ No ALPHA_VANTAGE_KEY found. Generating sample data for demo..."
-          uv run python generate_sample_data.py
+        echo "🔑 Running Russell 1000 ETL with hybrid SEC+Yahoo approach..."
+
+        # Run the Russell 1000 ETL - no fallback to sample data
+        if uv run python -m etl.main_russell_hybrid; then
+          echo "✅ Russell 1000 ETL completed successfully"
         else
-          echo "🔑 Running Russell 1000 ETL with Alpha Vantage API key..."
-          echo "🔑 API Key (first 8 chars): ${ALPHA_VANTAGE_KEY:0:8}..."
-          
-          # Try to run the Russell 1000 ETL with hybrid approach
-          if uv run python -m etl.main_russell_hybrid; then
-            echo "✅ Russell 1000 ETL completed successfully with live data"
-          else
-            echo "❌ Russell 1000 ETL failed, falling back to sample data..."
-            uv run python generate_sample_data.py
-          fi
+          echo "❌ Russell 1000 ETL failed"
+          exit 1
         fi
         
     - name: Commit and push changes
@@ -107,4 +101,4 @@ jobs:
         fi
         
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "🔗 **View the live dashboard**: [Vercel App](https://modern-magic-formula.vercel.app)" >> $GITHUB_STEP_SUMMARY
+        echo "🔗 **View the live dashboard**: [Vercel App](https://modernmagicformula.vercel.app)" >> $GITHUB_STEP_SUMMARY

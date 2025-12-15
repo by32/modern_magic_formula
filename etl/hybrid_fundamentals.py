@@ -42,6 +42,8 @@ class HybridFundamentals:
         self.rate_limit_delay = 0.1  # SEC allows 10 requests per second
         self.ticker_to_cik_cache = {}
         self.offline_mode = False
+        self.consecutive_failures = 0
+        self.max_consecutive_failures = 10  # Only go offline after 10 consecutive failures
         self.cached_results = self._load_cached_results()
         self.cached_lookup = {
             row.get('ticker'): row for row in self.cached_results if row.get('ticker')
@@ -126,12 +128,18 @@ class HybridFundamentals:
                 return self.ticker_to_cik_cache
 
             print(f"⚠️  Failed to get ticker mappings: {response.status_code}")
-            self.offline_mode = True
+            # Only go offline for rate limiting or server errors on critical endpoint
+            if response.status_code in {403, 429, 500, 502, 503}:
+                self.offline_mode = True
             return {}
 
+        except requests.exceptions.ConnectionError as e:
+            print(f"⚠️  Network error getting ticker mappings: {e}")
+            self.offline_mode = True
+            return {}
         except Exception as e:
             print(f"⚠️  Error getting ticker mappings: {e}")
-            self.offline_mode = True
+            # Don't go offline for other errors - might be temporary
             return {}
     
     def get_sec_fundamentals(self, ticker: str) -> Optional[Dict]:
@@ -161,14 +169,29 @@ class HybridFundamentals:
 
             if response.status_code == 200:
                 company_facts = response.json()
+                self.consecutive_failures = 0  # Reset on success
                 return self._extract_sec_metrics(company_facts)
 
-            if response.status_code in {403, 429, 500}:
-                self.offline_mode = True
+            # 404 = ticker not found (normal for some stocks) - don't go offline
+            if response.status_code == 404:
+                return None
+
+            # Rate limiting or server errors - track consecutive failures
+            if response.status_code in {403, 429, 500, 502, 503}:
+                self.consecutive_failures += 1
+                if self.consecutive_failures >= self.max_consecutive_failures:
+                    print(f"⚠️  {self.consecutive_failures} consecutive SEC failures - entering offline mode")
+                    self.offline_mode = True
             return None
 
+        except requests.exceptions.ConnectionError:
+            self.consecutive_failures += 1
+            if self.consecutive_failures >= self.max_consecutive_failures:
+                print(f"⚠️  {self.consecutive_failures} consecutive network failures - entering offline mode")
+                self.offline_mode = True
+            return None
         except Exception:
-            self.offline_mode = True
+            # Don't go offline for parsing errors etc
             return None
     
     def _extract_sec_metrics(self, company_facts: Dict) -> Dict:
@@ -312,10 +335,17 @@ class HybridFundamentals:
                 # Ignore price history issues – treated as unavailable in offline mode
                 pass
 
+            self.consecutive_failures = 0  # Reset on success
             return market_data
 
+        except requests.exceptions.ConnectionError:
+            self.consecutive_failures += 1
+            if self.consecutive_failures >= self.max_consecutive_failures:
+                print(f"⚠️  {self.consecutive_failures} consecutive Yahoo failures - entering offline mode")
+                self.offline_mode = True
+            return None
         except Exception:
-            self.offline_mode = True
+            # Don't go offline for individual ticker errors (e.g., delisted stocks)
             return None
     
     def get_hybrid_fundamentals(self, ticker: str) -> Optional[Dict]:
