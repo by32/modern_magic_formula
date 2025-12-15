@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MetricValue, FScoreBar, SectorBadge, MarketCapBadge } from '@/components/metrics';
 
@@ -157,6 +157,42 @@ export const columns: ColumnDef<StockData>[] = [
         colorScale="positive"
       />
     ),
+  },
+  {
+    accessorKey: 'momentum_6m',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-ml-3 h-8"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        6M Mom
+        <ArrowUpDown className="ml-1 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const value = row.getValue('momentum_6m') as number | null | undefined;
+      if (value === null || value === undefined || isNaN(value)) {
+        return <span className="text-muted-foreground">N/A</span>;
+      }
+      const isPositive = value >= 0;
+      return (
+        <div className="flex items-center gap-1">
+          {isPositive ? (
+            <TrendingUp className="h-4 w-4 text-positive" />
+          ) : (
+            <TrendingDown className="h-4 w-4 text-negative" />
+          )}
+          <MetricValue
+            value={value}
+            type="percent"
+            colorScale="bidirectional"
+            showSign
+          />
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'f_score',

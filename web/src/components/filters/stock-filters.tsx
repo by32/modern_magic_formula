@@ -17,6 +17,7 @@ export interface FilterState {
   limit: number;
   min_fscore: number;
   min_market_cap: number;
+  min_momentum: number;
   exclude_financials: boolean;
 }
 
@@ -55,7 +56,7 @@ export function StockFilters({ filters, onFiltersChange }: StockFiltersProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Number of Stocks */}
           <div className="space-y-2">
             <Label htmlFor="limit">Number of Stocks</Label>
@@ -136,6 +137,42 @@ export function StockFilters({ filters, onFiltersChange }: StockFiltersProps) {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Minimum Momentum */}
+          <div className="space-y-2">
+            <Label htmlFor="momentum">6M Momentum</Label>
+            <Select
+              value={filters.min_momentum.toString()}
+              onValueChange={(value) => updateFilter('min_momentum', parseFloat(value))}
+            >
+              <SelectTrigger id="momentum">
+                <SelectValue placeholder="Select momentum" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="-999">
+                  <span>Any momentum</span>
+                </SelectItem>
+                <SelectItem value="-0.1">
+                  <div className="flex items-center gap-2">
+                    <span>≥-10%</span>
+                    <span className="text-xs text-muted-foreground">Mild decline OK</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="0">
+                  <div className="flex items-center gap-2">
+                    <span>Positive only</span>
+                    <span className="text-xs text-muted-foreground">≥0%</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="0.1">
+                  <div className="flex items-center gap-2">
+                    <span>Strong</span>
+                    <span className="text-xs text-muted-foreground">≥+10%</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Exclude Financials Checkbox */}
@@ -188,6 +225,17 @@ function getActiveFilters(filters: FilterState) {
     active.push({
       key: 'marketcap',
       label: `Market Cap ${label}`,
+      onClear: () => {},
+    });
+  }
+
+  if (filters.min_momentum > -999) {
+    const label = filters.min_momentum >= 0
+      ? `Momentum ≥${(filters.min_momentum * 100).toFixed(0)}%`
+      : `Momentum ≥${(filters.min_momentum * 100).toFixed(0)}%`;
+    active.push({
+      key: 'momentum',
+      label,
       onClear: () => {},
     });
   }

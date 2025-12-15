@@ -12,6 +12,11 @@ interface StockData {
   magic_formula_rank: number;
   pe_ratio?: number;
   pb_ratio?: number;
+  momentum_6m?: number;
+  current_price?: number;
+  revenue?: number;
+  net_income?: number;
+  operating_income?: number;
 }
 
 // Cache data for 5 minutes to avoid excessive GitHub API calls
@@ -83,15 +88,17 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const minFScore = parseInt(searchParams.get('min_fscore') || '5');
     const minMarketCap = parseFloat(searchParams.get('min_market_cap') || '1000000000');
+    const minMomentum = parseFloat(searchParams.get('min_momentum') || '-999');
     const excludeFinancials = searchParams.get('exclude_financials') === 'true';
 
     // Apply DIY filters
-    let filteredData = stockData.filter((stock: StockData) => 
+    let filteredData = stockData.filter((stock: StockData) =>
       stock.f_score >= minFScore &&
       stock.market_cap >= minMarketCap &&
       stock.earnings_yield > 0 &&
       stock.roc > 0 &&
-      stock.magic_formula_rank <= 100 // Top 100 Magic Formula picks
+      stock.magic_formula_rank <= 100 && // Top 100 Magic Formula picks
+      (minMomentum <= -999 || (stock.momentum_6m !== undefined && stock.momentum_6m >= minMomentum))
     );
 
     // Optionally exclude financial and utility stocks (like official Magic Formula site)
@@ -137,6 +144,7 @@ export async function GET(request: NextRequest) {
       filters: {
         min_fscore: minFScore,
         min_market_cap: minMarketCap,
+        min_momentum: minMomentum,
         limit,
         exclude_financials: excludeFinancials
       },

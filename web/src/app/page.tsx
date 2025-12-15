@@ -38,6 +38,7 @@ export default function HomePage() {
     limit: 20,
     min_fscore: 5,
     min_market_cap: 1000000000,
+    min_momentum: -999,
     exclude_financials: true,
   });
 
@@ -47,7 +48,7 @@ export default function HomePage() {
     try {
       const [stocksRes, qualityRes] = await Promise.all([
         fetch(
-          `/api/stocks?limit=${filters.limit}&min_fscore=${filters.min_fscore}&min_market_cap=${filters.min_market_cap}&exclude_financials=${filters.exclude_financials}`
+          `/api/stocks?limit=${filters.limit}&min_fscore=${filters.min_fscore}&min_market_cap=${filters.min_market_cap}&min_momentum=${filters.min_momentum}&exclude_financials=${filters.exclude_financials}`
         ),
         fetch('/api/quality'),
       ]);
