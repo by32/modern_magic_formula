@@ -99,7 +99,6 @@ jobs:
         uv run python -c "
         import pandas, numpy, yfinance, requests
         from etl.hybrid_fundamentals import HybridFundamentals
-        from data_quality.monitoring import DataQualityMonitor
         print('✅ All dependencies verified')
         "
         
@@ -148,40 +147,39 @@ jobs:
       if: steps.etl.outputs.success == 'true' && github.event.inputs.skip_validation != 'true'
       run: |
         echo "🔍 Validating ETL results..."
-        
+
         uv run python -c "
         import pandas as pd
         import os
-        from data_quality.monitoring import DataQualityMonitor
-        
+
         # Load results
         if not os.path.exists('data/latest_screening_hybrid.csv'):
             raise Exception('ETL output file not found')
-            
+
         data = pd.read_csv('data/latest_screening_hybrid.csv')
-        
+
         # Basic validation (49 is OK for test mode since BRKB often fails)
         min_stocks = 49 if '${{ github.event.inputs.mode }}' == 'test' else 100
         if len(data) < min_stocks:
             raise Exception(f'Too few stocks: {len(data)} < {min_stocks}')
-            
+
         # Check required columns
         required_cols = ['ticker', 'magic_formula_rank', 'earnings_yield', 'roc', 'f_score']
         missing_cols = [col for col in required_cols if col not in data.columns]
         if missing_cols:
             raise Exception(f'Missing columns: {missing_cols}')
-            
-        # Quality check
-        if '${{ github.event.inputs.mode }}' != 'emergency':
-            monitor = DataQualityMonitor()
-            results = monitor.run_monitoring_check()
-            quality_score = results.get('overall_score', 0)
-            
-            if quality_score < 0.70:
-                print(f'⚠️ Quality score low: {quality_score:.1%}')
-            else:
-                print(f'✅ Quality score good: {quality_score:.1%}')
-        
+
+        # Quality checks
+        valid_ey = (data['earnings_yield'] > 0).sum() / len(data)
+        valid_roc = (data['roc'] > 0).sum() / len(data)
+        valid_fscore = (data['f_score'] >= 0).sum() / len(data)
+        quality_score = (valid_ey + valid_roc + valid_fscore) / 3
+
+        if quality_score < 0.70:
+            print(f'⚠️ Quality score low: {quality_score:.1%}')
+        else:
+            print(f'✅ Quality score good: {quality_score:.1%}')
+
         print(f'✅ Validation passed - {len(data)} stocks processed')
         "
         
