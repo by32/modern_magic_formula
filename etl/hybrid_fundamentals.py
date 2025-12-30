@@ -298,22 +298,27 @@ class HybridFundamentals:
 
         try:
             stock = yf.Ticker(ticker)
-            info = getattr(stock, "fast_info", None) or {}
 
-            # Fallback to .info only if fast_info is unavailable to limit API calls
-            if not info:
-                info = stock.info or {}
+            # Use fast_info for quick market data (it doesn't have sector/name)
+            fast_info = getattr(stock, "fast_info", None) or {}
+
+            # Get full info for metadata like sector and company name
+            # These fields are not available in fast_info
+            full_info = stock.info or {}
 
             market_data = {
-                'market_cap': info.get('market_cap') or info.get('marketCap', 0),
-                'current_price': info.get('last_price')
-                or info.get('currentPrice')
-                or info.get('regularMarketPrice', 0),
-                'shares_outstanding': info.get('shares_outstanding')
-                or info.get('sharesOutstanding', 0),
-                'sector': info.get('sector', 'Unknown'),
-                'industry': info.get('industry', 'Unknown'),
-                'company_name': info.get('longName', info.get('shortName', ticker))
+                'market_cap': fast_info.get('market_cap') or fast_info.get('marketCap') or full_info.get('marketCap', 0),
+                'current_price': fast_info.get('last_price')
+                or fast_info.get('currentPrice')
+                or full_info.get('currentPrice')
+                or full_info.get('regularMarketPrice', 0),
+                'shares_outstanding': fast_info.get('shares_outstanding')
+                or fast_info.get('sharesOutstanding')
+                or full_info.get('sharesOutstanding', 0),
+                # These metadata fields only exist in full .info, not fast_info
+                'sector': full_info.get('sector', 'Unknown'),
+                'industry': full_info.get('industry', 'Unknown'),
+                'company_name': full_info.get('longName') or full_info.get('shortName') or ticker
             }
 
             # Best effort attempt at momentum using local price history

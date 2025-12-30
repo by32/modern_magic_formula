@@ -47,7 +47,11 @@ def process_single_stock_hybrid(ticker: str, hybrid_data: Dict, stock_info: Dict
         operating_income = safe_float(hybrid_data.get("EBIT", 0))  # SEC operating income
         ebitda = safe_float(hybrid_data.get("EBITDA", 0))
         eps = safe_float(hybrid_data.get("EPS", 0))
-        name = hybrid_data.get("Name", stock_info.get('name', ticker))
+        # Prefer Russell 1000 name if Yahoo returned just the ticker
+        yahoo_name = hybrid_data.get("Name", ticker)
+        russell_name = stock_info.get('name', ticker)
+        # Use Russell name if Yahoo name is just the ticker symbol
+        name = russell_name if yahoo_name == ticker else yahoo_name
         
         # Validate minimum required data
         if market_cap <= 0:
@@ -150,7 +154,8 @@ def process_single_stock_hybrid(ticker: str, hybrid_data: Dict, stock_info: Dict
             "revenue": revenue,
             "net_income": net_income,
             "operating_income": operating_income,
-            "sector": hybrid_data.get("Sector", stock_info.get('sector', 'Unknown')),
+            # Prefer Russell 1000 sector if Yahoo returned Unknown
+            "sector": stock_info.get('sector') or hybrid_data.get("Sector") or 'Unknown',
             "weight": stock_info.get('weight', 0),
             "last_updated": datetime.now().isoformat(),
             
