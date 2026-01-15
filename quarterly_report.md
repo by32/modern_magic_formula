@@ -1,49 +1,49 @@
-# 📊 Q4 2025 Quarterly Report
+# 📊 Q1 2026 Quarterly Report
 
 ## 🏆 Magic Formula Performance Update
 
 **Dataset Overview**:
-- 📈 Total stocks analyzed: 961
-- 🏛️ SEC EDGAR coverage: 99.5%
+- 📈 Total stocks analyzed: 789
+- 🏛️ SEC EDGAR coverage: 100.0%
 - 🔍 Data quality score: Latest monitoring results
 
 **Sector Distribution** (Top Magic Formula stocks):
 
-- **Financial Services**: 13 stocks (26.0%)
-- **Healthcare**: 8 stocks (16.0%)
-- **Consumer Cyclical**: 7 stocks (14.0%)
-- **Basic Materials**: 6 stocks (12.0%)
-- **Technology**: 5 stocks (10.0%)
-- **Energy**: 4 stocks (8.0%)
-- **Communication Services**: 3 stocks (6.0%)
-- **Consumer Defensive**: 2 stocks (4.0%)
+- **Consumer Discretionary**: 12 stocks (24.0%)
+- **Financials**: 9 stocks (18.0%)
+- **Health Care**: 7 stocks (14.0%)
+- **Energy**: 6 stocks (12.0%)
+- **Communication**: 5 stocks (10.0%)
+- **Information Technology**: 4 stocks (8.0%)
+- **Materials**: 3 stocks (6.0%)
+- **Consumer Staples**: 2 stocks (4.0%)
 
 ## 🎯 Top 20 Magic Formula Recommendations
 
 | Rank | Ticker | Company | EY | ROC | F-Score | Sector |
 |------|--------|---------|----|----|---------|---------|
-|  1 | JEF | Jefferies Financial Group... | 147.2% | 7.6% | 3 | Financial Servi |
-|  2 | OGN | Organon & Co. | 51.1% | 33.1% | 5 | Healthcare |
-|  3 | CHRD | Chord Energy Corporation | 49.6% | 3.1% | 3 | Energy |
-|  4 | RF | Regions Financial Corpora... | 42.7% | 11.6% | 5 | Financial Servi |
-|  5 | CLVT | Clarivate Plc | 39.5% | -8.2% | 3 | Technology |
-|  6 | VTRS | Viatris Inc. | 35.5% | -19.8% | 3 | Healthcare |
-|  7 | EQH | Equitable Holdings, Inc. | 32.6% | 25.0% | 3 | Financial Servi |
-|  8 | OXY | Occidental Petroleum Corp... | 28.5% | 18.6% | 5 | Energy |
-|  9 | DXC | DXC Technology Company | 27.5% | 4.8% | 5 | Technology |
-| 10 | XRAY | DENTSPLY SIRONA Inc. | 25.2% | -37.7% | 3 | Healthcare |
-| 11 | PVH | PVH Corp. | 24.0% | 9.3% | 4 | Consumer Cyclic |
-| 12 | HUN | Huntsman Corporation | 23.9% | -7.8% | 4 | Basic Materials |
-| 13 | CROX | Crocs, Inc. | 23.5% | 15.4% | 3 | Consumer Cyclic |
-| 14 | COP | ConocoPhillips | 22.8% | 15.9% | 5 | Energy |
-| 15 | KHC | The Kraft Heinz Company | 20.8% | -11.6% | 3 | Consumer Defens |
-| 16 | JAZZ | Jazz Pharmaceuticals plc | 19.7% | -10.8% | 2 | Healthcare |
-| 17 | RNR | RenaissanceRe Holdings Lt... | 19.7% | 16.0% | 5 | Financial Servi |
-| 18 | APA | APA Corporation | 19.2% | 20.6% | 6 | Energy |
-| 19 | LNC | Lincoln National Corporat... | 18.9% | 13.0% | 3 | Financial Servi |
-| 20 | WBD | Warner Bros. Discovery, I... | 17.9% | 1.8% | 5 | Communication S |
+|  1 | OGN | Organon & Co. | 63.5% | 30.9% | 5 | Health Care |
+|  2 | DXC | DXC Technology Company | 44.7% | 11.8% | 5 | Information Tec |
+|  3 | CHTR | Charter Communications, I... | 28.2% | 26.0% | 5 | Communication |
+|  4 | OXY | Occidental Petroleum Corp... | 27.0% | 19.0% | 5 | Energy |
+|  5 | APA | APA Corporation | 25.5% | 30.5% | 5 | Energy |
+|  6 | HOG | Harley-Davidson, Inc. | 24.0% | 13.2% | 4 | Consumer Discre |
+|  7 | WEN | The Wendy's Company | 20.8% | 36.3% | 5 | Consumer Discre |
+|  8 | MSTR | Strategy Inc | 20.0% | 0.0% | 3 | Information Tec |
+|  9 | HPQ | HP Inc. | 19.2% | 0.0% | 6 | Information Tec |
+| 10 | THC | Tenet Healthcare Corporat... | 18.4% | 25.9% | 5 | Health Care |
+| 11 | LNC | Lincoln National Corporat... | 18.0% | 21.6% | 3 | Financials |
+| 12 | NWL | Newell Brands Inc. | 17.5% | 21.1% | 6 | Consumer Discre |
+| 13 | SOLV | Solventum Corporation | 16.8% | 73.3% | 4 | Health Care |
+| 14 | CMCSA | Comcast Corporation | 15.8% | 28.2% | 5 | Communication |
+| 15 | PFE | Pfizer Inc. | 15.1% | 76.7% | 4 | Health Care |
+| 16 | CNH | CNH Industrial N.V. | 14.8% | 17.7% | 5 | Industrials |
+| 17 | FHB | First Hawaiian, Inc. | 14.6% | 17.6% | 5 | Financials |
+| 18 | VZ | Verizon Communications In... | 14.2% | 26.1% | 5 | Communication |
+| 19 | TOL | Toll Brothers, Inc. | 13.8% | 16.5% | 4 | Consumer Discre |
+| 20 | HIW | Highwoods Properties, Inc... | 13.7% | 16.5% | 5 | Real Estate |
 
-## 📈 Earnings Q3 Season Update
+## 📈 Earnings Q4 Season Update
 - 📊 Latest quarterly earnings incorporated
 - 💰 Updated financial metrics and F-Scores
 - 🔍 Enhanced Magic Formula rankings with fresh data
@@ -54,7 +54,7 @@
 **Individual Investors**: Get your personalized 20-stock Magic Formula picks at:
 👉 **https://modernmagicformula.streamlit.app**
 
-**Next Update**: Q4 earnings season / Monthly refresh
+**Next Update**: Q1 earnings season / Monthly refresh
 
 ---
-*Generated automatically on October 15, 2025 | Modern Magic Formula v2.0*
+*Generated automatically on January 15, 2026 | Modern Magic Formula v2.0*
