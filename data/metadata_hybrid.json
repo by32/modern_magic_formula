@@ -1,10 +1,10 @@
 {
-  "run_date": "2026-01-26T07:02:20.155593",
-  "analysis_date": "2026-01-26T06:46:52.395573",
+  "run_date": "2026-02-02T07:24:15.928007",
+  "analysis_date": "2026-02-02T07:09:24.863657",
   "total_stocks": 788,
   "russell_1000_stocks": 1018,
   "successful_fetches": 788,
-  "processing_time_seconds": 927.760023,
+  "processing_time_seconds": 891.064353,
   "data_sources": {
     "sec_edgar_coverage": "788/788 (100.0%)",
     "yahoo_finance_coverage": "788/788 (100.0%)",
