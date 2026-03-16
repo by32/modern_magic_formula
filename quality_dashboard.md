@@ -7,7 +7,7 @@
 | Metric | Value | Status |
 |--------|-------|--------|
 | Quality Score | 100.0% | ✅ |
-| Stock Count | 776 | ✅ |
+| Stock Count | 771 | ✅ |
 | Data Age | 0 days | ✅ |
 | Anomalies | 0 | ✅ |
 | Alerts | 0 | ✅ |
@@ -18,9 +18,9 @@
 | Metric | Value |
 |--------|-------|
 | Quality Score | 100.0% |
-| Stock Count | 776 |
+| Stock Count | 771 |
 | Data Age | 0 days |
-| Last Updated | 2026-03-15 12:10 UTC |
+| Last Updated | 2026-03-16 12:17 UTC |
 
 ## 🎯 Recommendations
 
@@ -28,4 +28,4 @@
 
 
 ---
-*Last updated: 2026-03-15 12:10 UTC | [View Streamlit App](https://modernmagicformula.streamlit.app)*
+*Last updated: 2026-03-16 12:17 UTC | [View Streamlit App](https://modernmagicformula.streamlit.app)*
