@@ -1,13 +1,13 @@
 {
-  "run_date": "2026-05-04T07:36:27.029991",
-  "analysis_date": "2026-05-04T07:14:19.236344",
-  "total_stocks": 783,
+  "run_date": "2026-05-11T07:40:34.108098",
+  "analysis_date": "2026-05-11T07:26:14.066454",
+  "total_stocks": 784,
   "russell_1000_stocks": 1016,
-  "successful_fetches": 783,
-  "processing_time_seconds": 1327.793651,
+  "successful_fetches": 784,
+  "processing_time_seconds": 860.041647,
   "data_sources": {
-    "sec_edgar_coverage": "783/783 (100.0%)",
-    "yahoo_finance_coverage": "783/783 (100.0%)",
+    "sec_edgar_coverage": "784/784 (100.0%)",
+    "yahoo_finance_coverage": "784/784 (100.0%)",
     "hybrid_approach": true,
     "point_in_time_accuracy": true
   },
