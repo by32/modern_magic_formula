@@ -1,0 +1,7 @@
+# shipgate policy, written by `shipgate init` on 2026-10-21. Changes to this
+# file are ask-first: they need Ben's approval before they land.
+# push: nothing deploys on a push to main.
+tier = "push"
+# No verify: no lint/test/build command found.
+# ask_first: workflows can reach deploy and release secrets.
+ask_first = [".github/workflows/**"]

@@ -166,3 +166,5 @@ IEX_TOKEN= (optional)
 
 ---
 *Last Updated: December 2025 - System is fully operational and processing Russell 1000 monthly*
+
+@AGENTS.md
